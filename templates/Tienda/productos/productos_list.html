@@ -153,3 +153,14 @@
     </div>
 </div>
 {% endblock %}
+<h1>Lista de productos</h1>
+<a href="{% url 'producto_create' %}">Nuevo producto</a>
+<ul>
+  {% for p in productos %}
+    <li>
+      {{ p.nombre }} - ${{ p.precio }} - Stock: {{ p.stock }}
+      <a href="{% url 'producto_edit' p.id %}">Editar</a>
+      <a href="{% url 'producto_delete' p.id %}">Eliminar</a>
+    </li>
+  {% endfor %}
+</ul>

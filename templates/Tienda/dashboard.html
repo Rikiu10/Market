@@ -1,0 +1,70 @@
+{% extends "Tienda/base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+
+{% block content %}
+<h1 class="h4 mb-3">{{ titulo }}</h1>
+
+<div class="row g-3">
+  {# === GERENTE === #}
+  {% if request.session.role == 'GERENTE' %}
+    <div class="col-md-4">
+      <a class="text-decoration-none" href="{% url 'Tienda:ventas_list' %}">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-1">Ventas</h5>
+            <p class="text-muted mb-0">Diarias · Semanales · Mensuales · Anual</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a class="text-decoration-none" href="{% url 'Tienda:reportes' %}">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-1">Reportes</h5>
+            <p class="text-muted mb-0">KPIs y comparativas</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endif %}
+
+  {# === JEFE === #}
+  {% if request.session.role == 'JEFE' %}
+    <div class="col-md-4">
+      <a class="text-decoration-none" href="{% url 'Tienda:producto_list' %}">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-1">Inventario / Productos</h5>
+            <p class="text-muted mb-0">Stock, entradas y bajas</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a class="text-decoration-none" href="{% url 'Tienda:reportes' %}">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-1">Reportes</h5>
+            <p class="text-muted mb-0">Movimientos y alertas</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endif %}
+
+  {# === EMPLEADO === #}
+  {% if request.session.role == 'EMPLEADO' %}
+    <div class="col-md-4">
+      <a class="text-decoration-none" href="{% url 'Tienda:carrito' %}">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-1">Carrito / Venta</h5>
+            <p class="text-muted mb-0">Registrar venta y reposición</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

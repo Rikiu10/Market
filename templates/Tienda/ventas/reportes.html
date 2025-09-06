@@ -1,0 +1,12 @@
+{% extends "Tienda/base.html" %}
+{% block title %}Reportes{% endblock %}
+
+{% block content %}
+<h1>Reportes de Ventas</h1>
+<ul>
+    <li>Ventas diarias: {{ reportes.diarias }}</li>
+    <li>Ventas semanales: {{ reportes.semanales }}</li>
+    <li>Ventas mensuales: {{ reportes.mensuales }}</li>
+    <li>Producto más vendido: {{ reportes.top_producto }}</li>
+</ul>
+{% endblock %}
