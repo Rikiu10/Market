@@ -1,26 +1,60 @@
-{% extends "Tienda/base.html" %}
-{% block title %}Ingresar – Market{% endblock %}
+{% extends 'Tienda/base.html' %}
+
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-5">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h1 class="h4 mb-3">Ingresar</h1>
-        {% if error %}<div class="alert alert-danger py-2">{{ error }}</div>{% endif %}
-        <form method="post">
-          {% csrf_token %}
-          <div class="mb-3">
-            <label class="form-label" for="username">Usuario</label>
-            <input class="form-control" id="username" name="username" required placeholder="gerente1 / jefe1 / emple1">
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="password">Contraseña</label>
-            <input class="form-control" id="password" name="password" type="password" required placeholder="1234">
-          </div>
-          <button class="btn btn-dark w-100" type="submit">Ingresar</button>
-        </form>
-      </div>
+<div class="text-center">
+    <h1 class="mb-4">Bienvenido a Inventario Market</h1>
+    <p class="lead">Selecciona un módulo para comenzar</p>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Productos</h5>
+                <p class="card-text">Gestiona los productos disponibles en el supermercado.</p>
+                <a href="{% url 'productos_list' %}" class="btn btn-primary">Ir a Productos</a>
+            </div>
+        </div>
     </div>
-  </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Alertas</h5>
+                <p class="card-text">Visualiza alertas y genera historial de productos críticos.</p>
+                <a href="{% url 'alertas_list' %}" class="btn btn-danger">Ir a Alertas</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Ventas</h5>
+                <p class="card-text">Registra ventas y consulta reportes.</p>
+                <a href="{% url 'ventas_list' %}" class="btn btn-success">Ir a Ventas</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Empleados</h5>
+                <p class="card-text">Gestiona empleados y sus roles.</p>
+                <a href="{% url 'empleados_list' %}" class="btn btn-info">Ir a Empleados</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Movimientos</h5>
+                <p class="card-text">Controla las entradas y salidas de inventario.</p>
+                <a href="{% url 'movimientos_list' %}" class="btn btn-warning">Ir a Movimientos</a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
