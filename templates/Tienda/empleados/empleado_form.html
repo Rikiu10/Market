@@ -1,0 +1,31 @@
+{% extends 'Tienda/base.html' %}
+
+{% block content %}
+<h2>{% if empleado %}Editar Empleado{% else %}Nuevo Empleado{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" name="nombre" class="form-control" value="{{ empleado.nombre|default:'' }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Apellido</label>
+        <input type="text" name="apellido" class="form-control" value="{{ empleado.apellido|default:'' }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="{{ empleado.email|default:'' }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Rol</label>
+        <select name="rol" class="form-select">
+            <option value="Gerente" {% if empleado.rol == "Gerente" %}selected{% endif %}>Gerente</option>
+            <option value="Jefe" {% if empleado.rol == "Jefe" %}selected{% endif %}>Jefe</option>
+            <option value="Empleado" {% if empleado.rol == "Empleado" %}selected{% endif %}>Empleado</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'empleados_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
