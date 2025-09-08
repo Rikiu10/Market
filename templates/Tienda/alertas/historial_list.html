@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'Tienda/base.html' %}
 
 {% block title %}Historial de Alertas - {{ block.super }}{% endblock %}
 
@@ -109,10 +109,10 @@
                                     <i class="fas fa-bolt"></i> Acciones Rápidas
                                 </h6>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <a href="{% url 'productos_list' %}" class="btn btn-outline-primary btn-sm">
+                                    <a href="{% url 'Tienda:producto_list' %}" class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-box"></i> Ver Todos los Productos
                                     </a>
-                                    <a href="{% url 'alertas_list' %}" class="btn btn-outline-warning btn-sm">
+                                    <a href="{% url 'Tienda:alertas' %}" class="btn btn-outline-warning btn-sm">
                                         <i class="fas fa-exclamation-triangle"></i> Ver Alertas Activas
                                     </a>
                                 </div>
@@ -130,10 +130,10 @@
                         Las alertas aparecerán aquí una vez que se generen y/o se desactiven.
                     </p>
                     <div class="mt-3">
-                        <a href="{% url 'productos_list' %}" class="btn btn-primary me-2">
+                        <a href="{% url 'Tienda:producto_list' %}" class="btn btn-primary me-2">
                             <i class="fas fa-box"></i> Ir a Productos
                         </a>
-                        <a href="{% url 'alertas_list' %}" class="btn btn-outline-warning">
+                        <a href="{% url 'Tienda:alertas' %}" class="btn btn-outline-warning">
                             <i class="fas fa-exclamation-triangle"></i> Ver Alertas Activas
                         </a>
                     </div>
