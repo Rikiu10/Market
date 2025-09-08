@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Desactivación de Alerta - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-bell-slash"></i> Confirmar Desactivación de Alerta
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    Estás a punto de desactivar la siguiente alerta:
+                </p>
+                <h4 class="text-warning">"{{ alerta.mensaje }}"</h4>
+                <p class="card-text">
+                    Producto: <strong>{{ alerta.producto.nombre }}</strong> | 
+                    ID Alerta: <strong>{{ alerta.id }}</strong> | 
+                    Fecha: <strong>{{ alerta.fecha_creacion|date:"d/m/Y H:i" }}</strong>
+                </p>
+                <p class="card-text">
+                    Desactivar una alerta la moverá al historial y ya no aparecerá en la lista de alertas activas.
+                    ¿Estás seguro de que deseas desactivar esta alerta?
+                </p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'alertas_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-bell-slash"></i> Sí, Desactivar Alerta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

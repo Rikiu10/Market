@@ -1,0 +1,186 @@
+{% extends 'Tienda/base.html' %}
+
+{% block title %}Historial de Alertas - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col">
+        <!-- Información sobre el historial -->
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i>
+            <strong>Información:</strong> 
+            Aquí se muestra el registro completo de todas las alertas generadas y desactivadas en el sistema.
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history"></i> Historial de Alertas
+                </h5>
+                <span class="badge bg-info fs-6">
+                    {{ historial|length }} registro{{ historial|length|pluralize }}
+                </span>
+            </div>
+            <div class="card-body">
+                {% if historial %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Producto</th>
+                                <th>Mensaje</th>
+                                <th>Fecha de Creación</th>
+                                <th>Fecha de Resolución</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in historial %}
+                            <tr class="{% if registro.resuelto %}table-success{% else %}table-warning{% endif %}">
+                                <td>
+                                    <span class="badge bg-secondary">{{ registro.id }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ registro.producto.nombre }}</strong>
+                                </td>
+                                <td>
+                                    {{ registro.mensaje }}
+                                </td>
+                                <td>
+                                    <i class="fas fa-calendar"></i>
+                                    {{ registro.fecha_creacion|date:"d/m/Y" }}
+                                    <br>
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock"></i>
+                                        {{ registro.fecha_creacion|time:"H:i" }}
+                                    </small>
+                                </td>
+                                <td>
+                                    {% if registro.fecha_resolucion %}
+                                        <i class="fas fa-calendar-check"></i>
+                                        {{ registro.fecha_resolucion|date:"d/m/Y" }}
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock"></i>
+                                            {{ registro.fecha_resolucion|time:"H:i" }}
+                                        </small>
+                                    {% else %}
+                                        <span class="text-muted">Pendiente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if registro.resuelto %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle"></i> Resuelto
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-hourglass-half"></i> Pendiente
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Resumen del historial -->
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="alert alert-secondary">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Total de registros en el historial:</strong> {{ historial|length }}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Acciones rápidas -->
+                <div class="row mt-3">
+                    <div class="col">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">
+                                    <i class="fas fa-bolt"></i> Acciones Rápidas
+                                </h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{% url 'Tienda:producto_list' %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-box"></i> Ver Todos los Productos
+                                    </a>
+                                    <a href="{% url 'Tienda:alertas' %}" class="btn btn-outline-warning btn-sm">
+                                        <i class="fas fa-exclamation-triangle"></i> Ver Alertas Activas
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% else %}
+                <!-- Mensaje cuando no hay historial -->
+                <div class="text-center py-5">
+                    <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">El historial de alertas está vacío</h5>
+                    <p class="text-muted">
+                        Las alertas aparecerán aquí una vez que se generen y/o se desactiven.
+                    </p>
+                    <div class="mt-3">
+                        <a href="{% url 'Tienda:producto_list' %}" class="btn btn-primary me-2">
+                            <i class="fas fa-box"></i> Ir a Productos
+                        </a>
+                        <a href="{% url 'Tienda:alertas' %}" class="btn btn-outline-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Ver Alertas Activas
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Información adicional sobre el estado de resolución -->
+<div class="row mt-4">
+    <div class="col">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-info-circle"></i> Estados de Resolución
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-success me-2">Resuelto</span>
+                            <span>La alerta ha sido desactivada o el stock ha sido repuesto.</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="badge bg-warning me-2">Pendiente</span>
+                            <span>La alerta aún está activa o no se ha tomado acción.</span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-12">
+                        <h6><i class="fas fa-lightbulb text-info"></i> Consejos:</h6>
+                        <ul class="small text-muted">
+                            <li>Utilice el historial para revisar patrones de stock y planificar reposiciones.</li>
+                            <li>Asegúrese de que todas las alertas sean resueltas para mantener el inventario al día.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

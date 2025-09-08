@@ -21,4 +21,9 @@ urlpatterns = [
     path('gerente/', views.dashboard_gerente, name='dashboard_gerente'),
     path('jefe/', views.dashboard_jefe, name='dashboard_jefe'),
     path('empleado/', views.dashboard_empleado, name='dashboard_empleado'),
+    
+    # URLs para alertas
+    path("alertas/", views.alertas_view, name="alertas"),
+    path("alertas/desactivar/<int:alerta_id>/", views.alerta_desactivar, name="alerta_desactivar"),
+    path("historial/", views.historial_list, name="historial_list"),
 ]

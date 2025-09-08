@@ -82,14 +82,14 @@
                                 <td>
                                     <div class="btn-group-vertical" role="group">
                                         <!-- Botón para editar producto -->
-                                        <a href="{% url 'producto_editar' alerta.producto.id %}" 
+                                        <a href="{% url 'Tienda:producto_edit' alerta.producto.id %}" 
                                            class="btn btn-sm btn-outline-primary mb-1" 
                                            title="Editar producto">
                                             <i class="fas fa-edit"></i> Editar Producto
                                         </a>
                                         
                                         <!-- Botón para desactivar alerta -->
-                                        <a href="{% url 'alerta_desactivar' alerta.id %}" 
+                                        <a href="{% url 'Tienda:alerta_desactivar' alerta.id %}" 
                                            class="btn btn-sm btn-outline-success" 
                                            title="Desactivar alerta">
                                             <i class="fas fa-check"></i> Desactivar
@@ -142,13 +142,13 @@
                                     <i class="fas fa-bolt"></i> Acciones Rápidas
                                 </h6>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <a href="{% url 'productos_list' %}" class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-box"></i> Ver Todos los Productos
-                                    </a>
-                                    <a href="{% url 'producto_nuevo' %}" class="btn btn-outline-success btn-sm">
-                                        <i class="fas fa-plus"></i> Agregar Nuevo Producto
-                                    </a>
-                                    <a href="{% url 'historial_list' %}" class="btn btn-outline-info btn-sm">
+                                <a href="{% url 'Tienda:producto_list' %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-box"></i> Ver Todos los Productos
+                                </a>
+                                <a href="{% url 'Tienda:producto_create' %}" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-plus"></i> Agregar Nuevo Producto
+                                </a>
+                                <a href="{% url 'Tienda:historial_list' %}" class="btn btn-outline-info btn-sm">
                                         <i class="fas fa-history"></i> Ver Historial
                                     </a>
                                 </div>
