@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from datetime import date
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from functools import wraps
+from django.contrib import messages
+from .services import ProductoService, AlertaService, HistorialService
 
 # Create your views here.
-# ====== AUTENTICACIÓN “TEMPORAL” SIN BD ======
+# ====== AUTENTICACIÓN "TEMPORAL" SIN BD ======
 USERS = {
     'gerente1': ('1234', 'GERENTE'),
     'jefe1':    ('1234', 'JEFE'),
@@ -15,11 +17,6 @@ USERS = {
 ventas = [
     {"id": 1, "fecha": "2025-09-01", "total": 15000},
     {"id": 2, "fecha": "2025-09-02", "total": 25000},
-]
-
-productos = [   # <-- FALTABA
-    {"id": 1, "nombre": "Arroz",  "precio": 1500, "stock": 20},
-    {"id": 2, "nombre": "Aceite", "precio": 5000, "stock": 8},
 ]
 
 carrito = [
@@ -128,7 +125,7 @@ def carrito_view(request):
     total = sum(i['subtotal'] for i in carrito)
     return render(request, "Tienda/ventas/carrito.html", {"carrito": carrito})
 
-@require_role('GERENTE')
+@require_role('GERENTE', 'JEFE')
 def reportes_view(request):
     reportes = {
         "diarias": 5,
@@ -138,45 +135,91 @@ def reportes_view(request):
     }
     return render(request, "Tienda/ventas/reportes.html", {"reportes": reportes})
 
+# ====== VISTAS DE PRODUCTOS INTEGRADAS ======
 @require_role('JEFE','GERENTE')
 def producto_list(request):
-    for p in productos:
-        p.setdefault('cantidad_minima', 5)
+    """Vista para listar todos los productos usando el servicio"""
+    productos = ProductoService.obtener_todos()
     return render(request, "Tienda/productos/productos_list.html", {"productos": productos})
 
 @require_role('JEFE','GERENTE')
 def producto_create(request):
+    """Vista para crear un nuevo producto"""
     if request.method == "POST":
-        nuevo = {
-            "id": len(productos) + 1,
-            "nombre": request.POST.get("nombre"),
-            "precio": int(request.POST.get("precio")),
-            "stock": int(request.POST.get("stock")),
-            "cantidad_minima": int(request.POST.get("cantidad_minima") or 5),
-        }
-        productos.append(nuevo)
-        return redirect("Tienda:producto_list")
+        nombre = request.POST.get('nombre', '').strip()
+        precio = request.POST.get('precio', '')
+        stock = request.POST.get('stock', '')
+        cantidad_minima = request.POST.get('cantidad_minima', '')
+        
+        # Validaciones básicas
+        if not nombre:
+            messages.error(request, 'El nombre del producto es obligatorio')
+        elif not precio or float(precio) <= 0:
+            messages.error(request, 'El precio debe ser mayor a 0')
+        elif not stock or int(stock) < 0:
+            messages.error(request, 'El stock no puede ser negativo')
+        elif not cantidad_minima or int(cantidad_minima) < 0:
+            messages.error(request, 'La cantidad mínima no puede ser negativa')
+        else:
+            try:
+                ProductoService.crear(nombre, precio, stock, cantidad_minima)
+                messages.success(request, f'Producto "{nombre}" creado correctamente')
+                return redirect("Tienda:producto_list")
+            except ValueError as e:
+                messages.error(request, 'Error en los datos ingresados. Verifique los valores numéricos.')
+            except Exception as e:
+                messages.error(request, f'Error al guardar el producto: {str(e)}')
+    
     return render(request, "Tienda/productos/producto_form.html")
 
 @require_role('JEFE','GERENTE')
 def producto_edit(request, id):
-    producto = next((p for p in productos if p["id"] == id), None)
+    """Vista para editar un producto existente"""
+    producto = ProductoService.obtener_por_id(id)
     if not producto:
-        return redirect("Tienda:producto_list")
+        raise Http404("Producto no encontrado")
+    
     if request.method == "POST":
-        producto["nombre"] = request.POST.get("nombre")
-        producto["precio"] = int(request.POST.get("precio"))
-        producto["stock"] = int(request.POST.get("stock"))
-        producto["cantidad_minima"] = int(request.POST.get("cantidad_minima") or 5)
-        return redirect("Tienda:producto_list")
-    producto.setdefault("cantidad_minima", 5)
+        nombre = request.POST.get('nombre', '').strip()
+        precio = request.POST.get('precio', '')
+        stock = request.POST.get('stock', '')
+        cantidad_minima = request.POST.get('cantidad_minima', '')
+        
+        # Validaciones básicas
+        if not nombre:
+            messages.error(request, 'El nombre del producto es obligatorio')
+        elif not precio or float(precio) <= 0:
+            messages.error(request, 'El precio debe ser mayor a 0')
+        elif not stock or int(stock) < 0:
+            messages.error(request, 'El stock no puede ser negativo')
+        elif not cantidad_minima or int(cantidad_minima) < 0:
+            messages.error(request, 'La cantidad mínima no puede ser negativa')
+        else:
+            try:
+                ProductoService.actualizar(id, nombre, precio, stock, cantidad_minima)
+                messages.success(request, f'Producto "{nombre}" actualizado correctamente')
+                return redirect("Tienda:producto_list")
+            except ValueError as e:
+                messages.error(request, 'Error en los datos ingresados. Verifique los valores numéricos.')
+            except Exception as e:
+                messages.error(request, f'Error al guardar el producto: {str(e)}')
+    
     return render(request, "Tienda/productos/producto_form.html", {"producto": producto})
 
 @require_role('JEFE','GERENTE')
 def producto_delete(request, id):
-    global productos
-    productos = [p for p in productos if p["id"] != id]
-    return redirect("Tienda:producto_list")
+    """Vista para eliminar un producto"""
+    producto = ProductoService.obtener_por_id(id)
+    if not producto:
+        raise Http404("Producto no encontrado")
+    
+    if request.method == "POST":
+        nombre_producto = producto['nombre']
+        ProductoService.eliminar(id)
+        messages.success(request, f'Producto "{nombre_producto}" eliminado correctamente')
+        return redirect("Tienda:producto_list")
+    
+    return render(request, "Tienda/productos/producto_confirmar_eliminar.html", {"producto": producto})
 
 @require_role('GERENTE','JEFE')
 def venta_edit(request, id):
@@ -194,3 +237,48 @@ def venta_delete(request, id):
     global ventas
     ventas = [v for v in ventas if v["id"] != id]
     return redirect("Tienda:ventas_list")
+
+# ====== VISTAS DE ALERTAS INTEGRADAS ======
+@require_role('GERENTE', 'JEFE')
+def alertas_view(request):
+    """Vista para listar todas las alertas activas"""
+    alertas = AlertaService.obtener_todas()
+    
+    # Enriquecer alertas con información del producto
+    alertas_enriquecidas = []
+    for alerta in alertas:
+        producto = ProductoService.obtener_por_id(alerta['producto_id'])
+        alerta_enriquecida = alerta.copy()
+        alerta_enriquecida['producto'] = producto
+        alertas_enriquecidas.append(alerta_enriquecida)
+    
+    return render(request, "Tienda/alertas/alertas_list.html", {"alertas": alertas_enriquecidas})
+
+@require_role('GERENTE', 'JEFE')
+def alerta_desactivar(request, alerta_id):
+    """Vista para desactivar una alerta"""
+    alerta = AlertaService.obtener_por_id(alerta_id)
+    if not alerta:
+        raise Http404("Alerta no encontrada")
+    
+    if request.method == 'POST':
+        AlertaService.desactivar_alerta(alerta_id)
+        messages.success(request, 'Alerta desactivada correctamente')
+        return redirect('Tienda:alertas')
+    
+    return render(request, 'Tienda/alertas/alerta_confirmar_desactivar.html', {'alerta': alerta})
+
+@require_role('GERENTE', 'JEFE')
+def historial_list(request):
+    """Vista para mostrar el historial de alertas"""
+    historial = HistorialService.obtener_todo()
+    
+    # Enriquecer historial con información del producto
+    historial_enriquecido = []
+    for entrada in historial:
+        producto = ProductoService.obtener_por_id(entrada['producto_id'])
+        entrada_enriquecida = entrada.copy()
+        entrada_enriquecida['producto'] = producto
+        historial_enriquecido.append(entrada_enriquecida)
+    
+    return render(request, 'Tienda/alertas/historial_list.html', {'historial': historial_enriquecido})
