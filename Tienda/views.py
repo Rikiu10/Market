@@ -29,6 +29,7 @@ carrito = [
 empleados = [
     {"id": 1, "nombre": "Ana Torres", "rut": "12.345.678-9", "cargo": "Cajera", "email": "ana@market.cl", "telefono": "+56911111111"},
     {"id": 2, "nombre": "Pedro Soto", "rut": "9.876.543-2", "cargo": "Reponedor", "email": "pedro@market.cl", "telefono": "+56922222222"},
+    {"id": 3, "nombre": "Juan Gonzalez", "rut": "9.831.413-2", "cargo": "Reponedor", "email": "juanito@market.cl", "telefono": "+56922324232"}
 ]
 
 # Roles permitidos para cuentas creadas por la Dueña
@@ -65,7 +66,7 @@ def redirect_by_role(request):
         return redirect('Tienda:dashboard_jefe')
     if role == 'EMPLEADO':
         return redirect('Tienda:dashboard_empleado')
-    if role == 'DUEÑA':                                  # 👈 nuevo
+    if role == 'DUEÑA':                                  
         return redirect('Tienda:dashboard_duena')
     return redirect('Tienda:login')
 
@@ -100,7 +101,6 @@ def index(request):
             return redirect_by_role(request)
         context['error'] = 'Usuario o contraseña incorrectos.'
 
-    # ⬇️ RUTA EXACTA DE TU TEMPLATE
     return render(request, "Tienda/index.html", context)
 
 # (opcional) login_view si quieres /login además de /
@@ -126,7 +126,7 @@ def logout_view(request):
 
 # ====== DASHBOARDS ======
 
-@require_role('DUEÑA')                                   # 👈 nuevo
+@require_role('DUEÑA')                                  
 def dashboard_duena(request):
     return render(request, 'Tienda/dashboard.html', {'titulo': 'Panel Dueña'})
 
