@@ -1,8 +1,17 @@
 {% extends "Tienda/base.html" %}
 {% block title %}Carrito{% endblock %}
-
+{% load static %}
 {% block content %}
+
 <h1 class="h4 mb-3">Carrito de Compras</h1>
+
+<!-- Banner debajo del menú -->
+<div class="carrito-banner mb-4">
+  <img src="{% static 'img/carrito.jpg' %}" alt="Carrito de compras" class="img-fluid w-100">
+  <!-- Si quieres texto sobre la foto, descomenta lo de abajo -->
+  {# <div class="carrito-banner-overlay">Carrito de Compras</div> #}
+</div>
+
 <table class="table table-striped align-middle">
   <thead>
     <tr>
@@ -30,4 +39,5 @@
   <a href="{% url 'Tienda:venta_form' %}" class="btn btn-success">Finalizar Compra</a>
   <a href="{% url 'Tienda:ventas_list' %}" class="btn btn-outline-secondary">Ver Ventas</a>
 </div>
+
 {% endblock %}

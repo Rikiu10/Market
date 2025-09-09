@@ -67,7 +67,7 @@ def index(request):
         context['error'] = 'Usuario o contraseña incorrectos.'
 
     # ⬇️ RUTA EXACTA DE TU TEMPLATE
-    return render(request, "Tienda/empleados/login.html", context)
+    return render(request, "Tienda/index.html", context)
 
 # (opcional) login_view si quieres /login además de /
 def login_view(request):
@@ -84,7 +84,7 @@ def login_view(request):
             return redirect_by_role(request)
         context['error'] = 'Usuario o contraseña incorrectos.'
     # OJO: si tu login.html vive en subcarpeta, ajusta la ruta
-    return render(request, 'Tienda/empleados/login.html', context)
+    return render(request, 'Tienda/index.html', context)
 
 def logout_view(request):
     request.session.flush()

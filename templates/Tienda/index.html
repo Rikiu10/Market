@@ -1,24 +1,31 @@
 {% extends "Tienda/base.html" %}
 {% block title %}Ingresar – Market{% endblock %}
+{% load static %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-5">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h1 class="h4 mb-3">Ingresar</h1>
-        {% if error %}<div class="alert alert-danger py-2">{{ error }}</div>{% endif %}
-        <form method="post">
-          {% csrf_token %}
-          <div class="mb-3">
-            <label class="form-label" for="username">Usuario</label>
-            <input class="form-control" id="username" name="username" required placeholder="gerente1 / jefe1 / emple1">
+<div class="login-fondo">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h1 class="h4 mb-3">Ingresar</h1>
+            {% if error %}
+              <div class="alert alert-danger py-2">{{ error }}</div>
+            {% endif %}
+            <form method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label class="form-label" for="username">Usuario</label>
+                <input class="form-control" id="username" name="username" required placeholder="gerente1 / jefe1 / emple1">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="password">Contraseña</label>
+                <input class="form-control" id="password" name="password" type="password" required placeholder="1234">
+              </div>
+              <button class="btn btn-dark w-100" type="submit">Ingresar</button>
+            </form>
           </div>
-          <div class="mb-3">
-            <label class="form-label" for="password">Contraseña</label>
-            <input class="form-control" id="password" name="password" type="password" required placeholder="1234">
-          </div>
-          <button class="btn btn-dark w-100" type="submit">Ingresar</button>
-        </form>
+        </div>
       </div>
     </div>
   </div>
