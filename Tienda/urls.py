@@ -21,6 +21,13 @@ urlpatterns = [
     path('gerente/', views.dashboard_gerente, name='dashboard_gerente'),
     path('jefe/', views.dashboard_jefe, name='dashboard_jefe'),
     path('empleado/', views.dashboard_empleado, name='dashboard_empleado'),
+    path('duena/', views.dashboard_duena, name='dashboard_duena'), 
+
+    # Empleados (solo Dueña)
+    path("empleados/", views.empleados_list, name="empleados_list"),
+    path("empleados/nuevo/", views.empleado_create, name="empleado_create"),
+    path("empleados/editar/<int:id>/", views.empleado_edit, name="empleado_edit"),
+    path("empleados/eliminar/<int:id>/", views.empleado_delete, name="empleado_delete"),
     
     # URLs para alertas
     path("alertas/", views.alertas_view, name="alertas"),

@@ -70,5 +70,19 @@
       </a>
     </div>
   {% endif %}
+
+  {# === DUEÑA === #}
+  {% if request.session.role == 'DUEÑA' %}
+    <div class="col-md-4">
+      <a class="text-decoration-none" href="{% url 'Tienda:empleados_list' %}">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-1">Empleados</h5>
+            <p class="text-muted mb-0">Crear · Editar · Eliminar</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endif %}
 </div>
 {% endblock %}

@@ -11,6 +11,7 @@ USERS = {
     'gerente1': ('1234', 'GERENTE'),
     'jefe1':    ('1234', 'JEFE'),
     'emple1':   ('1234', 'EMPLEADO'),
+    'duena1':   ('1234', 'DUEÑA'), 
 }
 
 # ====== DATOS EN MEMORIA ======
@@ -24,6 +25,37 @@ carrito = [
     {"nombre": "Aceite", "cantidad": 1, "precio": 5000, "subtotal": 5000},
 ]
 
+#empleados en memoria (puedes partir vacío)
+empleados = [
+    {"id": 1, "nombre": "Ana Torres", "rut": "12.345.678-9", "cargo": "Cajera", "email": "ana@market.cl", "telefono": "+56911111111"},
+    {"id": 2, "nombre": "Pedro Soto", "rut": "9.876.543-2", "cargo": "Reponedor", "email": "pedro@market.cl", "telefono": "+56922222222"},
+]
+
+# Roles permitidos para cuentas creadas por la Dueña
+ROL_CHOICES = ['GERENTE', 'JEFE', 'EMPLEADO']
+
+def username_in_use(username, exclude_id=None):
+    """Valida unicidad de username contra USERS fijos y empleados."""
+    if username in USERS:
+        return True
+    for e in empleados:
+        if e.get('username') == username and (exclude_id is None or e['id'] != exclude_id):
+            return True
+    return False
+
+def get_account(username):
+    """
+    Devuelve (password, role) para login.
+    Primero busca en USERS fijos; si no, en empleados creados por Dueña.
+    """
+    if username in USERS:
+        return USERS[username]
+    for e in empleados:
+        if e.get('username') == username:
+            return (e.get('password'), e.get('rol'))
+    return None
+
+
 # ====== HELPERS ======
 def redirect_by_role(request):
     role = request.session.get('role')
@@ -33,6 +65,8 @@ def redirect_by_role(request):
         return redirect('Tienda:dashboard_jefe')
     if role == 'EMPLEADO':
         return redirect('Tienda:dashboard_empleado')
+    if role == 'DUEÑA':                                  # 👈 nuevo
+        return redirect('Tienda:dashboard_duena')
     return redirect('Tienda:login')
 
 def require_role(*roles):
@@ -59,7 +93,7 @@ def index(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
-        user = USERS.get(username)
+        user = get_account(username) 
         if user and user[0] == password:
             request.session['username'] = username
             request.session['role'] = user[1]
@@ -77,7 +111,7 @@ def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
-        user = USERS.get(username)
+        user = get_account(username) 
         if user and user[0] == password:
             request.session['username'] = username
             request.session['role'] = user[1]
@@ -91,6 +125,11 @@ def logout_view(request):
     return redirect('Tienda:login')
 
 # ====== DASHBOARDS ======
+
+@require_role('DUEÑA')                                   # 👈 nuevo
+def dashboard_duena(request):
+    return render(request, 'Tienda/dashboard.html', {'titulo': 'Panel Dueña'})
+
 @require_role('GERENTE')
 def dashboard_gerente(request):
     return render(request, 'Tienda/dashboard.html', {'titulo': 'Panel Gerente'})
@@ -282,3 +321,113 @@ def historial_list(request):
         historial_enriquecido.append(entrada_enriquecida)
     
     return render(request, 'Tienda/alertas/historial_list.html', {'historial': historial_enriquecido})
+
+# ====== CRUD EMPLEADOS (solo DUEÑA) ============================
+@require_role('DUEÑA')
+def empleados_list(request):
+    return render(request, "Tienda/empleados/empleados_list.html", {"empleados": empleados})
+
+@require_role('DUEÑA')
+def empleado_create(request):
+    if request.method == "POST":
+        nombre   = request.POST.get('nombre', '').strip()
+        rut      = request.POST.get('rut', '').strip()
+        cargo    = request.POST.get('cargo', '').strip()
+        email    = request.POST.get('email', '').strip()
+        telefono = request.POST.get('telefono', '').strip()
+
+        username = request.POST.get('username', '').strip().lower()
+        password = request.POST.get('password', '').strip()
+        rol      = request.POST.get('rol', '').strip().upper()
+
+        # Validaciones
+        if not nombre or not rut:
+            messages.error(request, "Nombre y RUT son obligatorios.")
+        elif not username:
+            messages.error(request, "Debes definir un nombre de usuario.")
+        elif username_in_use(username):
+            messages.error(request, "Ese nombre de usuario ya está en uso.")
+        elif not password or len(password) < 4:
+            messages.error(request, "La contraseña debe tener al menos 4 caracteres.")
+        elif rol not in ROL_CHOICES:
+            messages.error(request, "Rol inválido. Debe ser GERENTE, JEFE o EMPLEADO.")
+        else:
+            nuevo = {
+                "id": (empleados[-1]["id"] + 1) if empleados else 1,
+                "nombre": nombre, "rut": rut, "cargo": cargo,
+                "email": email, "telefono": telefono,
+                "username": username, "password": password, "rol": rol,
+            }
+            empleados.append(nuevo)
+            messages.success(request, f'Empleado "{nombre}" creado correctamente.')
+            return redirect("Tienda:empleados_list")
+
+        # Si hay errores, re-render con lo ingresado
+        data = {
+            "nombre": nombre, "rut": rut, "cargo": cargo,
+            "email": email, "telefono": telefono,
+            "username": username, "rol": rol
+        }
+        return render(request, "Tienda/empleados/empleado_form.html", {"empleado": data})
+
+    return render(request, "Tienda/empleados/empleado_form.html")
+
+
+@require_role('DUEÑA')
+def empleado_edit(request, id):
+    emp = next((e for e in empleados if e["id"] == id), None)
+    if not emp:
+        raise Http404("Empleado no encontrado")
+
+    if request.method == "POST":
+        nombre   = request.POST.get('nombre', '').strip()
+        rut      = request.POST.get('rut', '').strip()
+        cargo    = request.POST.get('cargo', '').strip()
+        email    = request.POST.get('email', '').strip()
+        telefono = request.POST.get('telefono', '').strip()
+
+        username = request.POST.get('username', '').strip().lower()
+        password = request.POST.get('password', '').strip()  # opcional: permitir vacío para no cambiar
+        rol      = request.POST.get('rol', '').strip().upper()
+
+        # Validaciones
+        if not nombre or not rut:
+            messages.error(request, "Nombre y RUT son obligatorios.")
+        elif not username:
+            messages.error(request, "Debes definir un nombre de usuario.")
+        elif username_in_use(username, exclude_id=id):
+            messages.error(request, "Ese nombre de usuario ya está en uso.")
+        elif rol not in ROL_CHOICES:
+            messages.error(request, "Rol inválido. Debe ser GERENTE, JEFE o EMPLEADO.")
+        else:
+            emp["nombre"] = nombre
+            emp["rut"] = rut
+            emp["cargo"] = cargo
+            emp["email"] = email
+            emp["telefono"] = telefono
+            emp["username"] = username
+            emp["rol"] = rol
+            if password:  # solo cambia si ingresó algo
+                if len(password) < 4:
+                    messages.error(request, "La contraseña debe tener al menos 4 caracteres.")
+                    return render(request, "Tienda/empleados/empleado_form.html", {"empleado": emp})
+                emp["password"] = password
+
+            messages.success(request, f'Empleado "{emp["nombre"]}" actualizado correctamente.')
+            return redirect("Tienda:empleados_list")
+
+    return render(request, "Tienda/empleados/empleado_form.html", {"empleado": emp})
+
+@require_role('DUEÑA')
+def empleado_delete(request, id):
+    emp = next((e for e in empleados if e["id"] == id), None)
+    if not emp:
+        raise Http404("Empleado no encontrado")
+
+    if request.method == "POST":
+        nombre = emp["nombre"]
+        empleados[:] = [e for e in empleados if e["id"] != id]
+        messages.success(request, f'Empleado "{nombre}" eliminado correctamente.')
+        return redirect("Tienda:empleados_list")
+
+    return render(request, "Tienda/empleados/empleado_confirmar_eliminar.html", {"empleado": emp})

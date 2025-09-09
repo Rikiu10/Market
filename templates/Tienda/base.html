@@ -25,6 +25,8 @@
             <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:reportes' %}">Reportes</a></li>
           {% elif request.session.role == 'EMPLEADO' %}
             <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:carrito' %}">Carrito</a></li>
+           {% elif request.session.role == 'DUEÑA' %}  
+             <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:empleados_list' %}">Empleados</a></li>  
           {% endif %}
         {% endif %}
       </ul>
