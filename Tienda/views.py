@@ -1,9 +1,17 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from datetime import date
 from django.http import HttpResponseForbidden, Http404
 from functools import wraps
 from django.contrib import messages
 from .services import ProductoService, AlertaService, HistorialService
+
+#tablas ricardo
+from django.contrib import messages
+from .models import Credenciales, Movimiento, Historial
+from .forms import CredencialesForm, MovimientoForm, HistorialForm
+#tablas ricardo
+
+
 
 # Create your views here.
 # ====== AUTENTICACIÓN "TEMPORAL" SIN BD ======
@@ -431,3 +439,112 @@ def empleado_delete(request, id):
         return redirect("Tienda:empleados_list")
 
     return render(request, "Tienda/empleados/empleado_confirmar_eliminar.html", {"empleado": emp})
+
+
+
+#movimientos en base de models tablas ricardo
+
+
+# --------- CREDENCIALES (DUEÑA) ---------
+@require_role('DUEÑA')
+def credenciales_list(request):
+    objetos = Credenciales.objects.all().order_by('idcredenciales')
+    return render(request, "Tienda/credenciales/credenciales_list.html", {"objetos": objetos})
+
+@require_role('DUEÑA')
+def credencial_create(request):
+    form = CredencialesForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Credencial creada correctamente.")
+        return redirect("Tienda:credenciales_list")
+    return render(request, "Tienda/credenciales/credencial_form.html", {"form": form})
+
+@require_role('DUEÑA')
+def credencial_edit(request, pk):
+    obj = get_object_or_404(Credenciales, pk=pk)
+    form = CredencialesForm(request.POST or None, instance=obj)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Credencial actualizada correctamente.")
+        return redirect("Tienda:credenciales_list")
+    return render(request, "Tienda/credenciales/credencial_form.html", {"form": form, "obj": obj})
+
+@require_role('DUEÑA')
+def credencial_delete(request, pk):
+    obj = get_object_or_404(Credenciales, pk=pk)
+    if request.method == "POST":
+        obj.delete()
+        messages.success(request, "Credencial eliminada correctamente.")
+        return redirect("Tienda:credenciales_list")
+    return render(request, "Tienda/credenciales/credencial_confirmar_eliminar.html", {"obj": obj})
+
+
+# --------- MOVIMIENTOS (DUEÑA) ---------
+@require_role('DUEÑA')
+def movimientos_list(request):
+    objetos = Movimiento.objects.all().order_by('-fecha')
+    return render(request, "Tienda/movimientos/movimientos_list.html", {"objetos": objetos})
+
+@require_role('DUEÑA')
+def movimiento_create(request):
+    form = MovimientoForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Movimiento creado correctamente.")
+        return redirect("Tienda:movimientos_list")
+    return render(request, "Tienda/movimientos/movimiento_form.html", {"form": form})
+
+@require_role('DUEÑA')
+def movimiento_edit(request, pk):
+    obj = get_object_or_404(Movimiento, pk=pk)
+    form = MovimientoForm(request.POST or None, instance=obj)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Movimiento actualizado correctamente.")
+        return redirect("Tienda:movimientos_list")
+    return render(request, "Tienda/movimientos/movimiento_form.html", {"form": form, "obj": obj})
+
+@require_role('DUEÑA')
+def movimiento_delete(request, pk):
+    obj = get_object_or_404(Movimiento, pk=pk)
+    if request.method == "POST":
+        obj.delete()
+        messages.success(request, "Movimiento eliminado correctamente.")
+        return redirect("Tienda:movimientos_list")
+    return render(request, "Tienda/movimientos/movimiento_confirmar_eliminar.html", {"obj": obj})
+
+
+# --------- HISTORIAL (DUEÑA) ---------
+@require_role('DUEÑA')
+def historial_list(request):
+    objetos = Historial.objects.all().order_by('-fecha')
+    return render(request, "Tienda/historial/historial_list.html", {"objetos": objetos})
+
+@require_role('DUEÑA')
+def historial_create(request):
+    form = HistorialForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Entrada de historial creada correctamente.")
+        return redirect("Tienda:historial_list")
+    return render(request, "Tienda/historial/historial_form.html", {"form": form})
+
+@require_role('DUEÑA')
+def historial_edit(request, pk):
+    obj = get_object_or_404(Historial, pk=pk)
+    form = HistorialForm(request.POST or None, instance=obj)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Entrada de historial actualizada correctamente.")
+        return redirect("Tienda:historial_list")
+    return render(request, "Tienda/historial/historial_form.html", {"form": form, "obj": obj})
+
+@require_role('DUEÑA')
+def historial_delete(request, pk):
+    obj = get_object_or_404(Historial, pk=pk)
+    if request.method == "POST":
+        obj.delete()
+        messages.success(request, "Entrada de historial eliminada correctamente.")
+        return redirect("Tienda:historial_list")
+    return render(request, "Tienda/historial/historial_confirmar_eliminar.html", {"obj": obj})

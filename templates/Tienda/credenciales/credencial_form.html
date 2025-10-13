@@ -1,0 +1,14 @@
+{% extends "Tienda/base.html" %}
+{% block title %}{% if obj %}Editar Credencial{% else %}Nueva Credencial{% endif %}{% endblock %}
+{% block content %}
+<h1 class="h4 mb-3">{% if obj %}Editar Credencial{% else %}Nueva Credencial{% endif %}</h1>
+
+<form method="post" class="row g-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="d-flex gap-2">
+    <button class="btn btn-dark" type="submit">Guardar</button>
+    <a class="btn btn-outline-secondary" href="{% url 'Tienda:credenciales_list' %}">Cancelar</a>
+  </div>
+</form>
+{% endblock %}

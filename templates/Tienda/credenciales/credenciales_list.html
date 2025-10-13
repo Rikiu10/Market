@@ -1,0 +1,32 @@
+{% extends "Tienda/base.html" %}
+{% block title %}Credenciales{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h4 mb-0">Credenciales</h1>
+  <a class="btn btn-dark" href="{% url 'Tienda:credencial_create' %}">Nueva</a>
+</div>
+
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Usuario</th>
+      <th class="text-end">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in objetos %}
+    <tr>
+      <td>{{ c.idcredenciales }}</td>
+      <td>{{ c.user }}</td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'Tienda:credencial_edit' c.idcredenciales %}">Editar</a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'Tienda:credencial_delete' c.idcredenciales %}">Eliminar</a>
+      </td>
+    </tr>
+    {% empty %}
+      <tr><td colspan="3" class="text-muted">No hay credenciales.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

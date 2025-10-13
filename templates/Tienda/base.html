@@ -26,7 +26,10 @@
           {% elif request.session.role == 'EMPLEADO' %}
             <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:carrito' %}">Carrito</a></li>
            {% elif request.session.role == 'DUEÑA' %}  
-             <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:empleados_list' %}">Empleados</a></li>  
+              <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:empleados_list' %}">Empleados</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:credenciales_list' %}">Credenciales</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:movimientos_list' %}">Movimientos</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'Tienda:historial_list' %}">Historial</a></li>  
           {% endif %}
         {% endif %}
       </ul>

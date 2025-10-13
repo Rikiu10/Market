@@ -33,4 +33,24 @@ urlpatterns = [
     path("alertas/", views.alertas_view, name="alertas"),
     path("alertas/desactivar/<int:alerta_id>/", views.alerta_desactivar, name="alerta_desactivar"),
     path("historial/", views.historial_list, name="historial_list"),
+
+
+    #URls tablas Ricardo, Movimiento, credenciales, historial
+    # CREDENCIALES
+    path("credenciales/", views.credenciales_list, name="credenciales_list"),
+    path("credenciales/nueva/", views.credencial_create, name="credencial_create"),
+    path("credenciales/editar/<int:pk>/", views.credencial_edit, name="credencial_edit"),
+    path("credenciales/eliminar/<int:pk>/", views.credencial_delete, name="credencial_delete"),
+
+    # MOVIMIENTOS
+    path("movimientos/", views.movimientos_list, name="movimientos_list"),
+    path("movimientos/nuevo/", views.movimiento_create, name="movimiento_create"),
+    path("movimientos/editar/<int:pk>/", views.movimiento_edit, name="movimiento_edit"),
+    path("movimientos/eliminar/<int:pk>/", views.movimiento_delete, name="movimiento_delete"),
+
+    # HISTORIAL
+    path("historiales/", views.historial_list, name="historial_list"),
+    path("historiales/nuevo/", views.historial_create, name="historial_create"),
+    path("historiales/editar/<int:pk>/", views.historial_edit, name="historial_edit"),
+    path("historiales/eliminar/<int:pk>/", views.historial_delete, name="historial_delete"),
 ]
