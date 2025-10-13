@@ -1,10 +1,9 @@
 from django.contrib import admin
+from .models import Credenciales, Movimiento, Historial
 
 # Register your models here.
 
-# Tienda/admin.py
-from django.contrib import admin
-from .models import Credenciales, Movimiento, Historial
+# Tienda/admin.py hola chicos
 
 @admin.register(Credenciales)
 class CredencialesAdmin(admin.ModelAdmin):
