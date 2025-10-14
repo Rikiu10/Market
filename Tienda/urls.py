@@ -61,4 +61,10 @@ urlpatterns = [
     path("ventas-crud/editar/<int:pk>/", views.venta_crud_edit, name="venta_crud_edit"),
     path("ventas-crud/eliminar/<int:pk>/", views.venta_crud_delete, name="venta_crud_delete"),
     path("empleado-crud/"),
+
+    #Empleado
+    path("empleados/", views.empleados_list, name="empleados_list"),
+    path("empleados/nuevo/", views.empleado_create, name="empleado_create"),
+    path("empleados/editar/<int:pk>/", views.empleado_edit, name="empleado_edit"),
+    path("empleados/eliminar/<int:pk>/", views.empleado_delete, name="empleado_delete"),
 ]
