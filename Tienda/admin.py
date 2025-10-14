@@ -12,13 +12,17 @@ class CredencialesAdmin(admin.ModelAdmin):
 
 @admin.register(Movimiento)
 class MovimientoAdmin(admin.ModelAdmin):
-    list_display = ("idmovimiento", "tipo", "fecha", "producto_idproducto", "descripcion")
+    # Form del admin: solo estos campos (no pide producto_idproducto)
+    fields = ("descripcion", "fecha", "tipo")
+    list_display = ("idmovimiento", "tipo", "fecha", "descripcion")
     list_filter  = ("tipo",)
     search_fields = ("descripcion",)
     date_hierarchy = "fecha"
 
 @admin.register(Historial)
 class HistorialAdmin(admin.ModelAdmin):
-    list_display = ("idhistorial", "fecha", "alertas_idalertas", "producto_idproducto")
+    # Form del admin: solo fecha (no pide alertas_idalertas ni producto_idproducto)
+    fields = ("fecha",)
+    list_display = ("idhistorial", "fecha")
     date_hierarchy = "fecha"
     search_fields = ("idhistorial",)

@@ -31,12 +31,11 @@ class CredencialesForm(forms.ModelForm):
 class MovimientoForm(forms.ModelForm):
     class Meta:
         model = Movimiento
-        fields = ['descripcion', 'fecha', 'tipo', 'producto_idproducto']
+        fields = ['descripcion', 'fecha', 'tipo']
         widgets = {
             'descripcion':         forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
             'fecha':               forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-            'tipo':                forms.TextInput(attrs={'class': 'form-control'}),
-            'producto_idproducto': forms.NumberInput(attrs={'class': 'form-control'}),
+            'tipo':                forms.TextInput(attrs={'class': 'form-control'})
         }
 
 
@@ -44,9 +43,7 @@ class MovimientoForm(forms.ModelForm):
 class HistorialForm(forms.ModelForm):
     class Meta:
         model = Historial
-        fields = ['fecha', 'alertas_idalertas', 'producto_idproducto']
+        fields = ['fecha']
         widgets = {
-            'fecha':             forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-            'alertas_idalertas': forms.NumberInput(attrs={'class': 'form-control'}),
-            'producto_idproducto': forms.NumberInput(attrs={'class': 'form-control'}),
+            'fecha':             forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
         }
