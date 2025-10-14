@@ -50,11 +50,29 @@ class Venta(models.Model):
     fecha = models.DateField()
     total = models.IntegerField()
 
-    # Sin fk → solo id
+    # Sin fk, solo id
     empleado_idempleado = models.IntegerField(null=True, blank=True)
 
     class Meta:
         db_table = 'venta'
 
     def __str__(self): return f'Venta #{self.idventa} - {self.fecha}'
+
+
+class Empleado(models.Model):
+    idempleado = models.AutoField(primary_key=True, db_column='idempleado')
+    nombre = models.CharField(max_length=45)
+    apellido = models.CharField(max_length=45)
+    email = models.EmailField(blank=True)
+
+    #Sin fk
+    credenciales_idcredenciales = models.IntegerField(null=True, blank=True)
+    tipoEmpleado_idtipoEmpleado  = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'empleado'
+
+    def __str__(self): return f'{self.nombre} {self.apellido}'.strip()
+
+
 
