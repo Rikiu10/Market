@@ -1,28 +1,15 @@
 {% extends "Tienda/base.html" %}
-{% block title %}Confirmar Eliminación{% endblock %}
+{% block title %}Eliminar Empleado{% endblock %}
 {% block content %}
-<div class="row">
-  <div class="col-md-8 offset-md-2">
-    <div class="card border-danger">
-      <div class="card-header bg-danger text-white">
-        <h5 class="mb-0">Confirmar Eliminación</h5>
-      </div>
-      <div class="card-body">
-        <p>¿Seguro que deseas eliminar al empleado:</p>
-        <h4 class="text-danger mb-3">{{ empleado.nombre }}</h4>
-        <ul class="mb-3 text-muted">
-          <li>RUT: {{ empleado.rut }}</li>
-          <li>Cargo: {{ empleado.cargo }}</li>
-          <li>Email: {{ empleado.email }}</li>
-        </ul>
-
-        <form method="post" class="d-flex justify-content-between">
-          {% csrf_token %}
-          <a href="{% url 'Tienda:empleados_list' %}" class="btn btn-secondary">Cancelar</a>
-          <button type="submit" class="btn btn-danger">Sí, eliminar</button>
-        </form>
-      </div>
-    </div>
+<div class="card border-danger">
+  <div class="card-header bg-danger text-white">Confirmar eliminación</div>
+  <div class="card-body">
+    <p>¿Eliminar al empleado <strong>{{ obj.nombre }} {{ obj.apellido }}</strong>?</p>
+    <form method="post" class="d-flex justify-content-between">
+      {% csrf_token %}
+      <a class="btn btn-secondary" href="{% url 'Tienda:empleados_list' %}">Cancelar</a>
+      <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+    </form>
   </div>
 </div>
 {% endblock %}

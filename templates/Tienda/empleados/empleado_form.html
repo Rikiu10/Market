@@ -1,53 +1,9 @@
 {% extends "Tienda/base.html" %}
-{% block title %}{% if empleado %}Editar Empleado{% else %}Nuevo Empleado{% endif %}{% endblock %}
+{% block title %}{% if obj %}Editar Empleado{% else %}Nuevo Empleado{% endif %}{% endblock %}
 {% block content %}
-<h1 class="h4 mb-3">{% if empleado %}Editar Empleado{% else %}Nuevo Empleado{% endif %}</h1>
-
+<h1 class="h4 mb-3">{% if obj %}Editar Empleado{% else %}Nuevo Empleado{% endif %}</h1>
 <form method="post" class="row g-3">
-  {% csrf_token %}
-  <div class="col-md-6">
-    <label class="form-label">Nombre</label>
-    <input name="nombre" class="form-control" required value="{{ empleado.nombre|default:'' }}">
-  </div>
-  <div class="col-md-6">
-    <label class="form-label">RUT</label>
-    <input name="rut" class="form-control" required value="{{ empleado.rut|default:'' }}">
-  </div>
-  <div class="col-md-6">
-    <label class="form-label">Cargo (descripción)</label>
-    <input name="cargo" class="form-control" value="{{ empleado.cargo|default:'' }}">
-  </div>
-  <div class="col-md-6">
-    <label class="form-label">Email</label>
-    <input name="email" type="email" class="form-control" value="{{ empleado.email|default:'' }}">
-  </div>
-  <div class="col-md-6">
-    <label class="form-label">Teléfono</label>
-    <input name="telefono" class="form-control" value="{{ empleado.telefono|default:'' }}">
-  </div>
-
-  <hr class="my-2">
-
-  <div class="col-md-4">
-    <label class="form-label">Usuario (login)</label>
-    <input name="username" class="form-control" required value="{{ empleado.username|default:'' }}">
-  </div>
-  <div class="col-md-4">
-    <label class="form-label">
-      Contraseña {% if empleado %}<small class="text-muted">(dejar en blanco para no cambiar)</small>{% endif %}
-    </label>
-    <input name="password" type="password" class="form-control" {% if not empleado %}required{% endif %}>
-  </div>
-  <div class="col-md-4">
-    <label class="form-label">Rol (permisos)</label>
-    <select name="rol" class="form-select" required>
-      <option value="">Seleccione…</option>
-      <option value="GERENTE" {% if empleado.rol == 'GERENTE' %}selected{% endif %}>GERENTE</option>
-      <option value="JEFE" {% if empleado.rol == 'JEFE' %}selected{% endif %}>JEFE</option>
-      <option value="EMPLEADO" {% if empleado.rol == 'EMPLEADO' %}selected{% endif %}>EMPLEADO</option>
-    </select>
-  </div>
-
+  {% csrf_token %} {{ form.as_p }}
   <div class="col-12 d-flex gap-2">
     <button class="btn btn-dark" type="submit">Guardar</button>
     <a class="btn btn-outline-secondary" href="{% url 'Tienda:empleados_list' %}">Cancelar</a>
