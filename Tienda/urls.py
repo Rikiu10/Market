@@ -54,7 +54,7 @@ urlpatterns = [
     path("historiales/editar/<int:pk>/", views.historial_edit, name="historial_edit"),
     path("historiales/eliminar/<int:pk>/", views.historial_delete, name="historial_delete"),
 
-    #urls tablas Soledad, Venta 
+    #urls tablas Soledad, Venta, Empleado, Tipo Empleado
     #Venta
     path("ventas-crud/", views.ventas_crud_list, name="ventas_crud_list"),
     path("ventas-crud/nueva/", views.venta_crud_create, name="venta_crud_create"),
@@ -67,4 +67,11 @@ urlpatterns = [
     path("empleados/nuevo/", views.empleado_create, name="empleado_create"),
     path("empleados/editar/<int:pk>/", views.empleado_edit, name="empleado_edit"),
     path("empleados/eliminar/<int:pk>/", views.empleado_delete, name="empleado_delete"),
+
+    #TipoEmpleado
+    path("tipoempleados/", views.tipoempleado_list, name="tipoempleado_list"),
+    path("tipoempleados/nuevo/", views.tipoempleado_create, name="tipoempleado_create"),
+    path("tipoempleados/editar/<int:pk>/", views.tipoempleado_edit, name="tipoempleado_edit"),
+    path("tipoempleados/eliminar/<int:pk>/", views.tipoempleado_delete, name="tipoempleado_delete"),
+
 ]

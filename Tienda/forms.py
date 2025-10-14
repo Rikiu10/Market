@@ -1,6 +1,6 @@
 # Tienda/forms.py
 from django import forms
-from .models import Credenciales, Movimiento, Historial, Venta, Empleado
+from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado
 
 # --- CREDENCIALES -------------------------------------------------
 class CredencialesForm(forms.ModelForm):
@@ -71,3 +71,11 @@ class EmpleadoForm(forms.ModelForm):
             'email':    forms.EmailInput(attrs={'class':'form-control'}),
         }
 
+#TipoEmpleado
+class TipoEmpleadoForm(forms.ModelForm):
+    class Meta:
+        model = TipoEmpleado
+        fields = ['rol']
+        widgets = {
+            'rol': forms.TextInput(attrs={'class': 'form-control'}),
+        }

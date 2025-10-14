@@ -7,8 +7,8 @@ from .services import ProductoService, AlertaService, HistorialService
 
 #tablas
 from django.contrib import messages
-from .models import Credenciales, Movimiento, Historial, Venta, Empleado
-from .forms import CredencialesForm, MovimientoForm, HistorialForm, VentaForm, EmpleadoForm
+from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado
+from .forms import CredencialesForm, MovimientoForm, HistorialForm, VentaForm, EmpleadoForm, TipoEmpleadoForm
 
 
 
@@ -620,4 +620,37 @@ def empleado_delete(request, pk):
         return redirect("Tienda:empleados_list")
     return render(request, "Tienda/empleados/empleado_confirmar_eliminar.html", {"obj": obj})
 
+#Tipo Empleado
 
+@require_role('DUEÑA')
+def tipoempleado_list(request):
+    objetos = TipoEmpleado.objects.all().order_by('idtipoEmpleado')
+    return render(request, "Tienda/tipoempleado/tipoempleado_list.html", {"objetos": objetos})
+
+@require_role('DUEÑA')
+def tipoempleado_create(request):
+    form = TipoEmpleadoForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Tipo de empleado creado correctamente.")
+        return redirect("Tienda:tipoempleado_list")
+    return render(request, "Tienda/tipoempleado/tipoempleado_form.html", {"form": form})
+
+@require_role('DUEÑA')
+def tipoempleado_edit(request, pk):
+    obj = get_object_or_404(TipoEmpleado, pk=pk)
+    form = TipoEmpleadoForm(request.POST or None, instance=obj)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Tipo de empleado actualizado correctamente.")
+        return redirect("Tienda:tipoempleado_list")
+    return render(request, "Tienda/tipoempleado/tipoempleado_form.html", {"form": form, "obj": obj})
+
+@require_role('DUEÑA')
+def tipoempleado_delete(request, pk):
+    obj = get_object_or_404(TipoEmpleado, pk=pk)
+    if request.method == "POST":
+        obj.delete()
+        messages.success(request, "Tipo de empleado eliminado correctamente.")
+        return redirect("Tienda:tipoempleado_list")
+    return render(request, "Tienda/tipoempleado/tipoempleado_confirmar_eliminar.html", {"obj": obj})

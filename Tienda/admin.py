@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Credenciales, Movimiento, Historial, Venta, Empleado
+from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado
 
 # Register your models here.
 
@@ -44,4 +44,10 @@ class EmpleadoAdmin(admin.ModelAdmin):
     list_display = ("idempleado", "nombre", "apellido", "email",
                     "credenciales_idcredenciales", "tipoEmpleado_idtipoEmpleado")
     search_fields = ("nombre", "apellido", "email")
+
+@admin.register(TipoEmpleado)
+class TipoEmpleadoAdmin(admin.ModelAdmin):
+    fields = ("rol",)  #Solo muestra el rol
+    list_display = ("idtipoEmpleado", "rol")
+    search_fields = ("rol",)
 

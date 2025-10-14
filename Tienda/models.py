@@ -75,4 +75,13 @@ class Empleado(models.Model):
     def __str__(self): return f'{self.nombre} {self.apellido}'.strip()
 
 
+class TipoEmpleado(models.Model):
+    idtipoEmpleado = models.AutoField(primary_key=True, db_column='idtipoEmpleado')
+    rol = models.CharField(max_length=45)
+
+    class Meta:
+        db_table = 'tipoEmpleado'
+
+    def __str__(self): return self.rol
+
 
