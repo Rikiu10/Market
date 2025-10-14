@@ -7,8 +7,8 @@ from .services import ProductoService, AlertaService, HistorialService
 
 #tablas
 from django.contrib import messages
-from .models import Credenciales, Movimiento, Historial, Venta
-from .forms import CredencialesForm, MovimientoForm, HistorialForm, VentaForm
+from .models import Credenciales, Movimiento, Historial, Venta, Empleado
+from .forms import CredencialesForm, MovimientoForm, HistorialForm, VentaForm, EmpleadoForm
 
 
 
@@ -551,8 +551,7 @@ def historial_delete(request, pk):
     return render(request, "Tienda/historial/historial_confirmar_eliminar.html", {"obj": obj})
 
 
-# --------- VENTA ---------
-# ----- VENTA -----
+#Venta
 @require_role('DUEÑA')
 def ventas_crud_list(request):
     objetos = Venta.objects.all().order_by('-fecha', '-idventa')
@@ -585,3 +584,40 @@ def venta_crud_delete(request, pk):
         messages.success(request, "Venta eliminada correctamente.")
         return redirect("Tienda:ventas_crud_list")
     return render(request, "Tienda/ventas_crud/venta_confirmar_eliminar.html", {"obj": obj})
+
+#Empleado
+
+@require_role('DUEÑA')
+def empleados_list(request):
+    objetos = Empleado.objects.all().order_by('idempleado')
+    return render(request, "Tienda/empleados/empleados_list.html", {"objetos": objetos})
+
+@require_role('DUEÑA')
+def empleado_create(request):
+    form = EmpleadoForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Empleado creado correctamente.")
+        return redirect("Tienda:empleados_list")
+    return render(request, "Tienda/empleados/empleado_form.html", {"form": form})
+
+@require_role('DUEÑA')
+def empleado_edit(request, pk):
+    obj = get_object_or_404(Empleado, pk=pk)
+    form = EmpleadoForm(request.POST or None, instance=obj)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Empleado actualizado correctamente.")
+        return redirect("Tienda:empleados_list")
+    return render(request, "Tienda/empleados/empleado_form.html", {"form": form, "obj": obj})
+
+@require_role('DUEÑA')
+def empleado_delete(request, pk):
+    obj = get_object_or_404(Empleado, pk=pk)
+    if request.method == "POST":
+        obj.delete()
+        messages.success(request, "Empleado eliminado correctamente.")
+        return redirect("Tienda:empleados_list")
+    return render(request, "Tienda/empleados/empleado_confirmar_eliminar.html", {"obj": obj})
+
+

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Credenciales, Movimiento, Historial, Venta
+from .models import Credenciales, Movimiento, Historial, Venta, Empleado
 
 # Register your models here.
 
@@ -32,3 +32,11 @@ class VentaAdmin(admin.ModelAdmin):
     fields = ("fecha", "total")  #se oculto empleado_idempleado
     list_display = ("idventa", "fecha", "total", "empleado_idempleado")
     date_hierarchy = "fecha"
+
+@admin.register(Empleado)
+class EmpleadoAdmin(admin.ModelAdmin):
+    fields = ("nombre", "apellido", "email") #sin ids
+    list_display = ("idempleado", "nombre", "apellido", "email",
+                    "credenciales_idcredenciales", "tipoEmpleado_idtipoEmpleado")
+    search_fields = ("nombre", "apellido", "email")
+
