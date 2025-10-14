@@ -1,6 +1,6 @@
 # Tienda/forms.py
 from django import forms
-from .models import Credenciales, Movimiento, Historial
+from .models import Credenciales, Movimiento, Historial, Venta
 
 # --- CREDENCIALES -------------------------------------------------
 class CredencialesForm(forms.ModelForm):
@@ -47,3 +47,15 @@ class HistorialForm(forms.ModelForm):
         widgets = {
             'fecha':             forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
         }
+
+# ---- VENTA ----
+class VentaForm(forms.ModelForm):
+    #Form sin empleado_idempleado
+    class Meta:
+        model = Venta
+        fields = ['fecha', 'total']
+        widgets = {
+            'fecha': forms.DateInput(attrs={'type':'date','class':'form-control'}),
+            'total': forms.NumberInput(attrs={'class':'form-control'}),
+        }
+

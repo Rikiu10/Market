@@ -5,11 +5,12 @@ from functools import wraps
 from django.contrib import messages
 from .services import ProductoService, AlertaService, HistorialService
 
-#tablas ricardo
+#tablas
 from django.contrib import messages
-from .models import Credenciales, Movimiento, Historial
-from .forms import CredencialesForm, MovimientoForm, HistorialForm
-#tablas ricardo
+from .models import Credenciales, Movimiento, Historial, Venta
+from .forms import CredencialesForm, MovimientoForm, HistorialForm, VentaForm
+
+
 
 
 
@@ -548,3 +549,39 @@ def historial_delete(request, pk):
         messages.success(request, "Entrada de historial eliminada correctamente.")
         return redirect("Tienda:historial_list")
     return render(request, "Tienda/historial/historial_confirmar_eliminar.html", {"obj": obj})
+
+
+# --------- VENTA ---------
+# ----- VENTA -----
+@require_role('DUEÑA')
+def ventas_crud_list(request):
+    objetos = Venta.objects.all().order_by('-fecha', '-idventa')
+    return render(request, "Tienda/ventas_crud/ventas_list.html", {"objetos": objetos})
+
+@require_role('DUEÑA')
+def venta_crud_create(request):
+    form = VentaForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Venta creada correctamente.")
+        return redirect("Tienda:ventas_crud_list")
+    return render(request, "Tienda/ventas_crud/venta_form.html", {"form": form})
+
+@require_role('DUEÑA')
+def venta_crud_edit(request, pk):
+    obj = get_object_or_404(Venta, pk=pk)
+    form = VentaForm(request.POST or None, instance=obj)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Venta actualizada correctamente.")
+        return redirect("Tienda:ventas_crud_list")
+    return render(request, "Tienda/ventas_crud/venta_form.html", {"form": form, "obj": obj})
+
+@require_role('DUEÑA')
+def venta_crud_delete(request, pk):
+    obj = get_object_or_404(Venta, pk=pk)
+    if request.method == "POST":
+        obj.delete()
+        messages.success(request, "Venta eliminada correctamente.")
+        return redirect("Tienda:ventas_crud_list")
+    return render(request, "Tienda/ventas_crud/venta_confirmar_eliminar.html", {"obj": obj})

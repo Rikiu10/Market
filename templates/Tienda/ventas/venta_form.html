@@ -1,21 +1,12 @@
 {% extends "Tienda/base.html" %}
-{% block title %}{% if venta %}Editar venta{% else %}Nueva venta{% endif %}{% endblock %}
+{% block title %}{% if obj %}Editar Venta{% else %}Nueva Venta{% endif %}{% endblock %}
 {% block content %}
-<h1 class="h4 mb-3">{% if venta %}Editar venta #{{ venta.id }}{% else %}Nueva venta{% endif %}</h1>
-
-<form method="post">
-  {% csrf_token %}
-  <div class="mb-3">
-    <label class="form-label">Fecha</label>
-    <input class="form-control" type="date" name="fecha" required value="{{ venta.fecha|default:'' }}">
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Total</label>
-    <input class="form-control" type="number" name="total" min="0" step="1" required value="{{ venta.total|default:'' }}">
-  </div>
+<h1 class="h4 mb-3">{% if obj %}Editar Venta{% else %}Nueva Venta{% endif %}</h1>
+<form method="post" class="row g-3">
+  {% csrf_token %} {{ form.as_p }}
   <div class="d-flex gap-2">
     <button class="btn btn-dark" type="submit">Guardar</button>
-    <a class="btn btn-outline-secondary" href="{% url 'Tienda:ventas_list' %}">Cancelar</a>
+    <a class="btn btn-outline-secondary" href="{% url 'Tienda:ventas_crud_list' %}">Cancelar</a>
   </div>
 </form>
 {% endblock %}

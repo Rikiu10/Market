@@ -53,4 +53,12 @@ urlpatterns = [
     path("historiales/nuevo/", views.historial_create, name="historial_create"),
     path("historiales/editar/<int:pk>/", views.historial_edit, name="historial_edit"),
     path("historiales/eliminar/<int:pk>/", views.historial_delete, name="historial_delete"),
+
+    #urls tablas Soledad, Venta 
+    #VENTA
+
+    path("ventas-crud/", views.ventas_crud_list, name="ventas_crud_list"),
+    path("ventas-crud/nueva/", views.venta_crud_create, name="venta_crud_create"),
+    path("ventas-crud/editar/<int:pk>/", views.venta_crud_edit, name="venta_crud_edit"),
+    path("ventas-crud/eliminar/<int:pk>/", views.venta_crud_delete, name="venta_crud_delete"),
 ]

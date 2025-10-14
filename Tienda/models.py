@@ -43,3 +43,18 @@ class Historial(models.Model):
 
     def __str__(self):
         return f'Historial #{self.idhistorial}'
+    
+
+class Venta(models.Model):
+    idventa = models.AutoField(primary_key=True, db_column='idventa')
+    fecha = models.DateField()
+    total = models.IntegerField()
+
+    # Sin fk → solo id
+    empleado_idempleado = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'venta'
+
+    def __str__(self): return f'Venta #{self.idventa} - {self.fecha}'
+
