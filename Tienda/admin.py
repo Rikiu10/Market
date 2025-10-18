@@ -1,7 +1,29 @@
 from django.contrib import admin
-from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado
+from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado, Alertas, DetalleVenta, Producto
 
 # Register your models here.
+
+@admin.register(Alertas)
+class AlertasAdmin(admin.ModelAdmin):
+    list_display = ("idalertas", "fecha", "estado")
+    list_display_links = ("idalertas", "fecha")
+    list_filter = ("estado",)
+    search_fields = ("estado",)
+    date_hierarchy = "fecha"
+
+@admin.register(Producto)
+class ProductoAdmin(admin.ModelAdmin):
+    list_display = ("idproducto", "nombre", "precio", "stock_actual", "cantidad_minima")
+    list_display_links = ("idproducto", "nombre")
+    list_filter = ("stock_actual",)
+    search_fields = ("nombre", "descripcion")
+
+@admin.register(DetalleVenta)
+class DetalleVentaAdmin(admin.ModelAdmin):
+    list_display = ("iddetalleVenta", "cantidad_producto", "precio_unitario", "subtotal", "producto_idproducto", "venta_idventa")
+    list_display_links = ("iddetalleVenta",)
+    search_fields = ("producto_idproducto", "venta_idventa")
+
 
 # Tienda/admin.py hola chicos
 

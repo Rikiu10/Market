@@ -85,3 +85,44 @@ class TipoEmpleado(models.Model):
     def __str__(self): return self.rol
 
 
+class Alertas(models.Model):
+    idalertas = models.AutoField(primary_key=True, db_column='idalertas')
+    fecha = models.DateField()
+    estado = models.CharField(max_length=45)
+
+    class Meta:
+        db_table = 'alertas'
+
+    def __str__(self):
+        return f'Alerta #{self.idalertas} - {self.estado}'
+    
+class Producto(models.Model):
+    idproducto = models.AutoField(primary_key=True, db_column='idproducto')
+    nombre = models.CharField(max_length=45)
+    descripcion = models.CharField(max_length=400)
+    precio = models.IntegerField()
+    stock_actual = models.IntegerField()
+    cantidad_minima = models.IntegerField()
+
+    class Meta:
+        db_table = 'producto'
+
+    def __str__(self):
+        return self.nombre
+
+
+class DetalleVenta(models.Model):
+    iddetalleVenta = models.AutoField(primary_key=True, db_column='iddetalleVenta')
+    cantidad_producto = models.IntegerField()
+    precio_unitario = models.IntegerField()
+    subtotal = models.IntegerField()
+
+    # SIN FK -> solo IDs
+    producto_idproducto = models.IntegerField(null=True, blank=True)
+    venta_idventa = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'detalleventa'
+
+    def __str__(self):
+       return f'DetalleVenta #{self.iddetalleVenta}'

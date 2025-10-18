@@ -60,7 +60,7 @@ urlpatterns = [
     path("ventas-crud/nueva/", views.venta_crud_create, name="venta_crud_create"),
     path("ventas-crud/editar/<int:pk>/", views.venta_crud_edit, name="venta_crud_edit"),
     path("ventas-crud/eliminar/<int:pk>/", views.venta_crud_delete, name="venta_crud_delete"),
-    path("empleado-crud/"),
+    # path("empleado-crud/"), # Comentado para corregir TypeError
 
     #Empleado
     path("empleados/", views.empleados_list, name="empleados_list"),
