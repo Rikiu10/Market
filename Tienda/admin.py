@@ -31,7 +31,6 @@ class DetalleVentaAdmin(admin.ModelAdmin):
 class CredencialesAdmin(admin.ModelAdmin):
     list_display = ("idcredenciales", "user")
     search_fields = ("user",)
-    search_fields = ("user",)
 
 @admin.register(Movimiento)
 class MovimientoAdmin(admin.ModelAdmin):
