@@ -369,12 +369,12 @@ def movimiento_delete(request, pk):
     return render(request, "Tienda/movimientos/movimiento_confirmar_eliminar.html", {"obj": obj})
 
 # HISTORIAL (tabla)
-@require_role('DUEÑA')
+@require_role('GERENTE')
 def historial_list(request):
     objetos = Historial.objects.all().order_by('-fecha')
     return render(request, "Tienda/historial/historial_list.html", {"objetos": objetos})
 
-@require_role('DUEÑA')
+@require_role('GERENTE')
 def historial_create(request):
     form = HistorialForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -383,7 +383,7 @@ def historial_create(request):
         return redirect("Tienda:historial_list")
     return render(request, "Tienda/historial/historial_form.html", {"form": form})
 
-@require_role('DUEÑA')
+@require_role('GERENTE')
 def historial_edit(request, pk):
     obj = get_object_or_404(Historial, pk=pk)
     form = HistorialForm(request.POST or None, instance=obj)
@@ -393,7 +393,7 @@ def historial_edit(request, pk):
         return redirect("Tienda:historial_list")
     return render(request, "Tienda/historial/historial_form.html", {"form": form, "obj": obj})
 
-@require_role('DUEÑA')
+@require_role('GERENTE')
 def historial_delete(request, pk):
     obj = get_object_or_404(Historial, pk=pk)
     if request.method == "POST":
@@ -403,12 +403,12 @@ def historial_delete(request, pk):
     return render(request, "Tienda/historial/historial_confirmar_eliminar.html", {"obj": obj})
 
 # VENTAS (CRUD Dueña)
-@require_role('DUEÑA')
+@require_role('GERENTE')
 def ventas_crud_list(request):
     objetos = Venta.objects.all().order_by('-fecha', '-idventa')
     return render(request, "Tienda/ventas/ventas_crud_list.html", {"objetos": objetos})
 
-@require_role('DUEÑA')
+@require_role('GERENTE')
 def venta_crud_create(request):
     form = VentaForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -417,7 +417,7 @@ def venta_crud_create(request):
         return redirect("Tienda:ventas_crud_list")
     return render(request, "Tienda/ventas/venta_crud_form.html", {"form": form})
 
-@require_role('DUEÑA')
+@require_role('GERENTE')
 def venta_crud_edit(request, pk):
     obj = get_object_or_404(Venta, pk=pk)
     form = VentaForm(request.POST or None, instance=obj)
@@ -427,7 +427,7 @@ def venta_crud_edit(request, pk):
         return redirect("Tienda:ventas_crud_list")
     return render(request, "Tienda/ventas/venta_crud_form.html", {"form": form, "obj": obj})
 
-@require_role('DUEÑA')
+@require_role('GERENTE')
 def venta_crud_delete(request, pk):
     obj = get_object_or_404(Venta, pk=pk)
     if request.method == "POST":
