@@ -21,6 +21,40 @@ USERS = {
     'duena1':   ('1234', 'DUEÑA'),
 }
 
+def get_account(username):
+    """
+    Devuelve (password, rol) para el login.
+
+    1) Primero busca en el diccionario USERS (usuarios de prueba).
+    2) Si no está, busca en Credenciales + Empleado + TipoEmpleado.
+       - Credenciales.user = username
+       - Empleado.credenciales = esa credencial
+       - Empleado.tipoEmpleado.rol = GERENTE/JEFE/EMPLEADO
+    """
+    # 1) Usuarios hardcodeados
+    if username in USERS:
+        return USERS[username]   # (password, rol)
+
+    # 2) Usuarios en la base de datos
+    cred = Credenciales.objects.filter(user=username).first()
+    if not cred:
+        return None
+
+    # buscamos el empleado que use esas credenciales
+    empleado = (
+        Empleado.objects
+        .select_related('tipoEmpleado')
+        .filter(credenciales=cred)
+        .first()
+    )
+
+    if not empleado or not empleado.tipoEmpleado:
+        # No tiene empleado asociado o no tiene tipo, no dejamos entrar
+        return None
+
+    rol = empleado.tipoEmpleado.rol.upper()   # GERENTE/JEFE/EMPLEADO
+    return (cred.password, rol)
+
 def redirect_by_role(request):
     role = request.session.get('role')
     if role == 'GERENTE':
@@ -56,28 +90,35 @@ def index(request):
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
-        user = USERS.get(username)
-        if user and user[0] == password:
+
+        account = get_account(username)  # <-- ahora usamos la BD también
+        if account and account[0] == password:
             request.session['username'] = username
-            request.session['role'] = user[1]
+            request.session['role'] = account[1]
             return redirect_by_role(request)
+
         ctx['error'] = 'Usuario o contraseña incorrectos.'
     return render(request, "Tienda/index.html", ctx)
+
 
 def login_view(request):
     if request.session.get('role'):
         return redirect_by_role(request)
+
     ctx = {'error': None}
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '').strip()
-        user = USERS.get(username)
-        if user and user[0] == password:
+
+        account = get_account(username)
+        if account and account[0] == password:
             request.session['username'] = username
-            request.session['role'] = user[1]
+            request.session['role'] = account[1]
             return redirect_by_role(request)
+
         ctx['error'] = 'Usuario o contraseña incorrectos.'
     return render(request, 'Tienda/index.html', ctx)
+
 
 def logout_view(request):
     request.session.flush()
@@ -124,11 +165,11 @@ carrito_demo = [
     {"nombre": "Aceite", "cantidad": 1, "precio": 5000, "subtotal": 5000},
 ]
 
-@require_role('GERENTE','JEFE')
+@require_role('GERENTE','JEFE', 'EMPLEADO')
 def ventas_list(request):
     return render(request, "Tienda/ventas/ventas_list.html", {"ventas": ventas_demo})
 
-@require_role('GERENTE','JEFE')
+@require_role('GERENTE','JEFE','EMPLEADO')
 def venta_form(request):
     if request.method == "POST":
         nueva_venta = {
@@ -140,7 +181,7 @@ def venta_form(request):
         return redirect("Tienda:ventas_list")
     return render(request, "Tienda/ventas/venta_form.html")
 
-@require_role('GERENTE','JEFE')
+@require_role('GERENTE','JEFE','EMPLEADO')
 def venta_edit(request, id):
     venta = next((v for v in ventas_demo if v["id"] == id), None)
     if not venta:
@@ -151,7 +192,7 @@ def venta_edit(request, id):
         return redirect("Tienda:ventas_list")
     return render(request, "Tienda/ventas/venta_form.html", {"venta": venta})
 
-@require_role('GERENTE','JEFE')
+@require_role('GERENTE','JEFE','EMPLEADO')
 def venta_delete(request, id):
     global ventas_demo
     ventas_demo = [v for v in ventas_demo if v["id"] != id]
@@ -369,12 +410,12 @@ def movimiento_delete(request, pk):
     return render(request, "Tienda/movimientos/movimiento_confirmar_eliminar.html", {"obj": obj})
 
 # HISTORIAL (tabla)
-@require_role('GERENTE')
+@require_role('GERENTE', 'JEFE')
 def historial_list(request):
     objetos = Historial.objects.all().order_by('-fecha')
     return render(request, "Tienda/historial/historial_list.html", {"objetos": objetos})
 
-@require_role('GERENTE')
+@require_role('GERENTE', 'JEFE')
 def historial_create(request):
     form = HistorialForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -383,7 +424,7 @@ def historial_create(request):
         return redirect("Tienda:historial_list")
     return render(request, "Tienda/historial/historial_form.html", {"form": form})
 
-@require_role('GERENTE')
+@require_role('GERENTE', 'JEFE')
 def historial_edit(request, pk):
     obj = get_object_or_404(Historial, pk=pk)
     form = HistorialForm(request.POST or None, instance=obj)
@@ -393,7 +434,7 @@ def historial_edit(request, pk):
         return redirect("Tienda:historial_list")
     return render(request, "Tienda/historial/historial_form.html", {"form": form, "obj": obj})
 
-@require_role('GERENTE')
+@require_role('GERENTE', 'JEFE')
 def historial_delete(request, pk):
     obj = get_object_or_404(Historial, pk=pk)
     if request.method == "POST":
@@ -403,12 +444,12 @@ def historial_delete(request, pk):
     return render(request, "Tienda/historial/historial_confirmar_eliminar.html", {"obj": obj})
 
 # VENTAS (CRUD Dueña)
-@require_role('GERENTE')
+@require_role('GERENTE', 'EMPLEADO')
 def ventas_crud_list(request):
     objetos = Venta.objects.all().order_by('-fecha', '-idventa')
     return render(request, "Tienda/ventas/ventas_crud_list.html", {"objetos": objetos})
 
-@require_role('GERENTE')
+@require_role('GERENTE','EMPLEADO')
 def venta_crud_create(request):
     form = VentaForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -417,7 +458,7 @@ def venta_crud_create(request):
         return redirect("Tienda:ventas_crud_list")
     return render(request, "Tienda/ventas/venta_crud_form.html", {"form": form})
 
-@require_role('GERENTE')
+@require_role('GERENTE','EMPLEADO')
 def venta_crud_edit(request, pk):
     obj = get_object_or_404(Venta, pk=pk)
     form = VentaForm(request.POST or None, instance=obj)
@@ -427,7 +468,7 @@ def venta_crud_edit(request, pk):
         return redirect("Tienda:ventas_crud_list")
     return render(request, "Tienda/ventas/venta_crud_form.html", {"form": form, "obj": obj})
 
-@require_role('GERENTE')
+@require_role('GERENTE','EMPLEADO')
 def venta_crud_delete(request, pk):
     obj = get_object_or_404(Venta, pk=pk)
     if request.method == "POST":

@@ -20,8 +20,8 @@
       <td>{{ e.nombre }}</td>
       <td>{{ e.apellido }}</td>
       <td>{{ e.email }}</td>
-      <td>{{ e.credenciales_idcredenciales }}</td>
-      <td>{{ e.tipoEmpleado_idtipoEmpleado }}</td>
+      <td>{{ e.credenciales.user }}</td>
+      <td>{{ e.tipoEmpleado.rol }}</td>
       <td class="text-end">
         <a class="btn btn-sm btn-outline-primary" href="{% url 'Tienda:empleado_edit' e.idempleado %}">Editar</a>
         <a class="btn btn-sm btn-outline-danger" href="{% url 'Tienda:empleado_delete' e.idempleado %}">Eliminar</a>

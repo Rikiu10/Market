@@ -20,9 +20,9 @@ class ProductoAdmin(admin.ModelAdmin):
 
 @admin.register(DetalleVenta)
 class DetalleVentaAdmin(admin.ModelAdmin):
-    list_display = ("iddetalleVenta", "cantidad_producto", "precio_unitario", "subtotal", "producto_idproducto", "venta_idventa")
+    list_display = ("iddetalleVenta", "cantidad_producto", "precio_unitario", "subtotal","producto", "venta")
     list_display_links = ("iddetalleVenta",)
-    search_fields = ("producto_idproducto", "venta_idventa")
+    search_fields = ("producto__nombre", "venta__idventa")
 
 
 # Tienda/admin.py hola chicos
@@ -55,16 +55,16 @@ class HistorialAdmin(admin.ModelAdmin):
 
 @admin.register(Venta)
 class VentaAdmin(admin.ModelAdmin):
-    fields = ("fecha", "total")  #se oculto empleado_idempleado
-    list_display = ("idventa", "fecha", "total", "empleado_idempleado")
+    fields = ("fecha", "total", "empleado")  #se oculto empleado_idempleado
+    list_display = ("idventa", "fecha", "total", "empleado")
     date_hierarchy = "fecha"
 
 @admin.register(Empleado)
 class EmpleadoAdmin(admin.ModelAdmin):
     fields = ("nombre", "apellido", "email") #sin ids
     list_display = ("idempleado", "nombre", "apellido", "email",
-                    "credenciales_idcredenciales", "tipoEmpleado_idtipoEmpleado")
-    search_fields = ("nombre", "apellido", "email")
+                    "credenciales", "tipoEmpleado")
+    search_fields = ("nombre", "apellido", "email", "credenciales__user", "tipoEmpleado__rol")
 
 @admin.register(TipoEmpleado)
 class TipoEmpleadoAdmin(admin.ModelAdmin):

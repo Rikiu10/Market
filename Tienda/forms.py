@@ -27,15 +27,15 @@ class CredencialesForm(forms.ModelForm):
         return p
 
 
-# --- MOVIMIENTO (sin FK: guardamos solo IDs) ----------------------
 class MovimientoForm(forms.ModelForm):
     class Meta:
         model = Movimiento
-        fields = ['descripcion', 'fecha', 'tipo']
+        fields = ['descripcion', 'fecha', 'tipo', 'producto']
         widgets = {
-            'descripcion':         forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
-            'fecha':               forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-            'tipo':                forms.TextInput(attrs={'class': 'form-control'})
+            'descripcion': forms.Textarea(attrs={'class': 'form-control', 'rows': 2}),
+            'fecha':       forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'tipo':        forms.TextInput(attrs={'class': 'form-control'}),
+            'producto':    forms.Select(attrs={'class': 'form-control'}),
         }
 
 
@@ -43,20 +43,32 @@ class MovimientoForm(forms.ModelForm):
 class HistorialForm(forms.ModelForm):
     class Meta:
         model = Historial
-        fields = ['fecha']
+        # ahora incluimos las FKs:
+        fields = ['fecha', 'alerta', 'producto']
         widgets = {
-            'fecha':             forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'})
+            'fecha': forms.DateTimeInput(
+                attrs={'type': 'datetime-local', 'class': 'form-control'}
+            ),
+            'alerta': forms.Select(attrs={'class': 'form-select'}),
+            'producto': forms.Select(attrs={'class': 'form-select'}),
         }
 
 #Venta
 class VentaForm(forms.ModelForm):
-    #Form sin empleado_idempleado
     class Meta:
         model = Venta
-        fields = ['fecha', 'total']
+        # AHORA incluimos el empleado
+        fields = ['fecha', 'total', 'empleado']
         widgets = {
-            'fecha': forms.DateInput(attrs={'type':'date','class':'form-control'}),
-            'total': forms.NumberInput(attrs={'class':'form-control'}),
+            'fecha': forms.DateInput(
+                attrs={'type': 'date', 'class': 'form-control'}
+            ),
+            'total': forms.NumberInput(
+                attrs={'class': 'form-control'}
+            ),
+            'empleado': forms.Select(
+                attrs={'class': 'form-select'}  # o 'form-control' si prefieres
+            ),
         }
 
 #Empleado
@@ -64,11 +76,13 @@ class EmpleadoForm(forms.ModelForm):
     #Form sin empleado/credenciales
     class Meta:
         model = Empleado
-        fields = ['nombre', 'apellido', 'email'] #sin ids
+        fields = ['nombre', 'apellido', 'email','credenciales', 'tipoEmpleado'] #sin ids
         widgets = {
             'nombre':   forms.TextInput(attrs={'class':'form-control'}),
             'apellido': forms.TextInput(attrs={'class':'form-control'}),
             'email':    forms.EmailInput(attrs={'class':'form-control'}),
+            'credenciales': forms.Select(attrs={'class': 'form-control'}),
+            'tipoEmpleado': forms.Select(attrs={'class': 'form-control'}),
         }
 
 #TipoEmpleado

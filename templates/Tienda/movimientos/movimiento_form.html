@@ -1,14 +1,16 @@
 {% extends "Tienda/base.html" %}
-{% block title %}{% if obj %}Editar Movimiento{% else %}Nuevo Movimiento{% endif %}{% endblock %}
+{% block title %}Movimiento{% endblock %}
 {% block content %}
-<h1 class="h4 mb-3">{% if obj %}Editar Movimiento{% else %}Nuevo Movimiento{% endif %}</h1>
+<h1 class="h4 mb-3">
+  {% if form.instance.pk %}Editar movimiento{% else %}Nuevo movimiento{% endif %}
+</h1>
 
-<form method="post" class="row g-3">
+<form method="post" class="card card-body">
   {% csrf_token %}
   {{ form.as_p }}
-  <div class="d-flex gap-2">
-    <button class="btn btn-dark" type="submit">Guardar</button>
-    <a class="btn btn-outline-secondary" href="{% url 'Tienda:movimientos_list' %}">Cancelar</a>
+  <div class="mt-3">
+    <button type="submit" class="btn btn-dark">Guardar</button>
+    <a href="{% url 'Tienda:movimientos_list' %}" class="btn btn-secondary">Cancelar</a>
   </div>
 </form>
 {% endblock %}

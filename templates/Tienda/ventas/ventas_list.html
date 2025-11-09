@@ -1,25 +1,43 @@
 {% extends "Tienda/base.html" %}
-{% block title %}Ventas (CRUD){% endblock %}
+{% block title %}Ventas{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h4 mb-0">Ventas (CRUD Dueña)</h1>
-  <a class="btn btn-dark" href="{% url 'Tienda:venta_crud_create' %}">Nueva</a>
+  <h1 class="h4 mb-0">Ventas</h1>
+  <a class="btn btn-dark" href="{% url 'Tienda:venta_crud_create' %}">Nueva venta</a>
 </div>
+
 <table class="table table-striped align-middle">
-  <thead><tr><th>ID</th><th>Fecha</th><th>Total</th><th>Empleado (ID)</th><th class="text-end">Acciones</th></tr></thead>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Fecha</th>
+      <th>Total</th>
+      <th>Empleado</th>
+      <th class="text-end">Acciones</th>
+    </tr>
+  </thead>
   <tbody>
     {% for v in objetos %}
     <tr>
       <td>{{ v.idventa }}</td>
       <td>{{ v.fecha }}</td>
       <td>${{ v.total }}</td>
-      <td>{{ v.empleado_idempleado }}</td>
+      <td>
+        {% if v.empleado %}
+          {{ v.empleado }} {# usa __str__ de Empleado: nombre apellido #}
+        {% else %}
+          Sin asignar
+        {% endif %}
+      </td>
       <td class="text-end">
-        <a class="btn btn-sm btn-outline-primary" href="{% url 'Tienda:venta_crud_edit' v.idventa %}">Editar</a>
-        <a class="btn btn-sm btn-outline-danger" href="{% url 'Tienda:venta_crud_delete' v.idventa %}">Eliminar</a>
+        <a class="btn btn-sm btn-outline-primary" href="{% url 'Tienda:venta_crud_edit' v.pk %}">Editar</a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'Tienda:venta_crud_delete' v.pk %}">Eliminar</a>
       </td>
     </tr>
-    {% empty %}<tr><td colspan="5" class="text-muted">Sin ventas.</td></tr>{% endfor %}
+    {% empty %}
+    <tr><td colspan="5" class="text-muted">Sin ventas registradas.</td></tr>
+    {% endfor %}
   </tbody>
 </table>
 {% endblock %}
+

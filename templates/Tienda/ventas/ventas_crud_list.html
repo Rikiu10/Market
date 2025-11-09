@@ -12,6 +12,7 @@
       <th>ID</th>
       <th>Fecha</th>
       <th>Total</th>
+      <th>Empleado</th>
       <th class="text-end">Acciones</th>
     </tr>
   </thead>
@@ -21,14 +22,22 @@
       <td>{{ v.idventa }}</td>
       <td>{{ v.fecha }}</td>
       <td>${{ v.total }}</td>
+      <td>
+        {% if v.empleado %}
+          {{ v.empleado }} {# usa __str__ de Empleado: nombre apellido #}
+        {% else %}
+          Sin asignar
+        {% endif %}
+      </td>
       <td class="text-end">
         <a class="btn btn-sm btn-outline-primary" href="{% url 'Tienda:venta_crud_edit' v.pk %}">Editar</a>
         <a class="btn btn-sm btn-outline-danger" href="{% url 'Tienda:venta_crud_delete' v.pk %}">Eliminar</a>
       </td>
     </tr>
     {% empty %}
-    <tr><td colspan="4" class="text-muted">Sin ventas registradas.</td></tr>
+    <tr><td colspan="5" class="text-muted">Sin ventas registradas.</td></tr>
     {% endfor %}
   </tbody>
 </table>
 {% endblock %}
+

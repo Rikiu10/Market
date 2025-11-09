@@ -11,8 +11,8 @@
     <tr>
       <th>ID</th>
       <th>Fecha</th>
-      <th>Alerta (ID)</th>
-      <th>Producto (ID)</th>
+      <th>Alerta</th>
+      <th>Producto</th>
       <th class="text-end">Acciones</th>
     </tr>
   </thead>
@@ -21,8 +21,8 @@
     <tr>
       <td>{{ h.idhistorial }}</td>
       <td>{{ h.fecha }}</td>
-      <td>{{ h.alertas_idalertas }}</td>
-      <td>{{ h.producto_idproducto }}</td>
+      <td>{{ h.alerta }}</td>
+      <td>{{ h.producto }}</td>
       <td class="text-end">
         <a class="btn btn-sm btn-outline-primary" href="{% url 'Tienda:historial_edit' h.idhistorial %}">Editar</a>
         <a class="btn btn-sm btn-outline-danger" href="{% url 'Tienda:historial_delete' h.idhistorial %}">Eliminar</a>

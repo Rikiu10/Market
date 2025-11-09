@@ -13,7 +13,7 @@
       <th>Descripción</th>
       <th>Fecha</th>
       <th>Tipo</th>
-      <th>Producto (ID)</th>
+      <th>Producto</th>
       <th class="text-end">Acciones</th>
     </tr>
   </thead>
@@ -24,7 +24,13 @@
       <td>{{ m.descripcion }}</td>
       <td>{{ m.fecha }}</td>
       <td>{{ m.tipo }}</td>
-      <td>{{ m.producto_idproducto }}</td>
+      <td>
+         {% if m.producto %}
+          {{ m.producto.idproducto }} - {{ m.producto.nombre }}
+        {% else %}
+          <span class="text-muted">Sin producto</span>
+        {% endif %}
+      </td>
       <td class="text-end">
         <a class="btn btn-sm btn-outline-primary" href="{% url 'Tienda:movimiento_edit' m.idmovimiento %}">Editar</a>
         <a class="btn btn-sm btn-outline-danger" href="{% url 'Tienda:movimiento_delete' m.idmovimiento %}">Eliminar</a>
