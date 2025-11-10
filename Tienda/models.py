@@ -195,3 +195,83 @@ class DetalleVenta(models.Model):
 
     def __str__(self):
         return f'DetalleVenta #{self.iddetalleVenta}'
+
+# --------------------- PRODUCTOS CON ORM (MOVIDO DE services.py) ---------------------- #
+from .data import AlertaService # Importar el servicio de alertas desde data.py
+
+class ProductoService:
+    """
+    Ahora usa el modelo Producto (BD). Devuelve dicts compatibles con tus
+    vistas/templates anteriores (incluye clave 'stock').
+    """
+
+    @staticmethod
+    def _to_dict(obj: Producto):
+        return {
+            "id": obj.pk,                     
+            "idproducto": obj.idproducto,     
+            "nombre": obj.nombre,
+            "descripcion": obj.descripcion,
+            "precio": obj.precio,
+            "stock": obj.stock_actual,       
+            "cantidad_minima": obj.cantidad_minima,
+        }
+
+    @staticmethod
+    def obtener_todos():
+        qs = Producto.objects.all().order_by('idproducto')
+        return [ProductoService._to_dict(p) for p in qs]
+
+    @staticmethod
+    def obtener_por_id(producto_id):
+        try:
+            # Usamos pk para compatibilidad con el _to_dict
+            p = Producto.objects.get(pk=producto_id) 
+        except Producto.DoesNotExist:
+            return None
+        return ProductoService._to_dict(p)
+
+    @staticmethod
+    def crear(nombre, precio, stock, cantidad_minima, descripcion=""):
+        p = Producto.objects.create(
+            nombre=nombre,
+            descripcion=descripcion or "",
+            precio=int(precio),
+            stock_actual=int(stock),
+            cantidad_minima=int(cantidad_minima),
+        )
+        prod_dict = ProductoService._to_dict(p)
+
+        try:
+            AlertaService.verificar_y_crear_alerta(prod_dict)
+        except Exception:
+            pass
+
+        return prod_dict
+
+    @staticmethod
+    def actualizar(producto_id, nombre, precio, stock, cantidad_minima, descripcion=None):
+        p = Producto.objects.get(pk=producto_id)  
+        p.nombre = nombre
+        if descripcion is not None:
+            p.descripcion = descripcion
+        p.precio = int(precio)
+        p.stock_actual = int(stock)
+        p.cantidad_minima = int(cantidad_minima)
+        p.save()
+
+        prod_dict = ProductoService._to_dict(p)
+        try:
+            AlertaService.verificar_y_crear_alerta(prod_dict)
+        except Exception:
+            pass
+
+        return prod_dict
+
+    @staticmethod
+    def eliminar(producto_id):
+        try:
+            AlertaService.eliminar_por_producto(producto_id)
+        except Exception:
+            pass
+        Producto.objects.filter(pk=producto_id).delete()

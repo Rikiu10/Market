@@ -4,7 +4,8 @@ from functools import wraps
 from django.contrib import messages
 
 # Services (productos/alertas históricos simulados)
-from .services import ProductoService, AlertaService, HistorialService
+from .models import ProductoService
+from .data import AlertaService, HistorialService
 
 # Modelos y formularios (CRUDs “sin FK”)
 from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado
