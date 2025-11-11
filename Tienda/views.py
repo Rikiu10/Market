@@ -2,16 +2,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden, Http404
 from functools import wraps
 from django.contrib import messages
+from django.db import transaction
+from django.forms import formset_factory
 
 # Services (productos/alertas históricos simulados)
 from .models import ProductoService
 from .data import AlertaService, HistorialService
 
 # Modelos y formularios (CRUDs “sin FK”)
-from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado
+from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado, DetalleVenta
 from .forms import (
     CredencialesForm, MovimientoForm, HistorialForm,
-    VentaForm, EmpleadoForm, TipoEmpleadoForm
+    VentaForm, EmpleadoForm, TipoEmpleadoForm, DetalleVentaForm, VentaPOSForm
 )
 
 # ------------------- AUTENTICACIÓN “TEMPORAL” -------------------
@@ -166,9 +168,11 @@ carrito_demo = [
     {"nombre": "Aceite", "cantidad": 1, "precio": 5000, "subtotal": 5000},
 ]
 
-@require_role('GERENTE','JEFE', 'EMPLEADO')
+@require_role('GERENTE', 'JEFE', 'EMPLEADO')
 def ventas_list(request):
-    return render(request, "Tienda/ventas/ventas_list.html", {"ventas": ventas_demo})
+    # Tomamos las ventas reales desde la BD
+    objetos = Venta.objects.select_related('empleado').order_by('-fecha', '-idventa')
+    return render(request, "Tienda/ventas/ventas_list.html", {"objetos": objetos})
 
 @require_role('GERENTE','JEFE','EMPLEADO')
 def venta_form(request):
@@ -450,33 +454,54 @@ def ventas_crud_list(request):
     objetos = Venta.objects.all().order_by('-fecha', '-idventa')
     return render(request, "Tienda/ventas/ventas_crud_list.html", {"objetos": objetos})
 
-@require_role('GERENTE','EMPLEADO')
+@require_role('GERENTE', 'EMPLEADO')
 def venta_crud_create(request):
-    form = VentaForm(request.POST or None)
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Venta creada correctamente.")
-        return redirect("Tienda:ventas_crud_list")
+    if request.method == "POST":
+        form = VentaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Venta creada correctamente.")
+            return redirect("Tienda:ventas_crud_list")
+    else:
+        form = VentaForm()
+
     return render(request, "Tienda/ventas/venta_crud_form.html", {"form": form})
 
-@require_role('GERENTE','EMPLEADO')
+@require_role('GERENTE', 'JEFE', 'EMPLEADO')
 def venta_crud_edit(request, pk):
-    obj = get_object_or_404(Venta, pk=pk)
-    form = VentaForm(request.POST or None, instance=obj)
-    if request.method == "POST" and form.is_valid():
-        form.save()
-        messages.success(request, "Venta actualizada correctamente.")
-        return redirect("Tienda:ventas_crud_list")
-    return render(request, "Tienda/ventas/venta_crud_form.html", {"form": form, "obj": obj})
+    venta = get_object_or_404(Venta, pk=pk)
 
-@require_role('GERENTE','EMPLEADO')
-def venta_crud_delete(request, pk):
-    obj = get_object_or_404(Venta, pk=pk)
     if request.method == "POST":
-        obj.delete()
+        form = VentaForm(request.POST, instance=venta)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Venta actualizada correctamente.")
+            return redirect("Tienda:ventas_list")
+    else:
+        form = VentaForm(instance=venta)
+
+    return render(
+        request,
+        "Tienda/ventas/venta_crud_form.html",
+        {"form": form, "obj": venta}
+    )
+
+
+@require_role('GERENTE', 'JEFE', 'EMPLEADO')
+def venta_crud_delete(request, pk):
+    venta = get_object_or_404(Venta, pk=pk)
+
+    if request.method == "POST":
+        venta.delete()
         messages.success(request, "Venta eliminada correctamente.")
-        return redirect("Tienda:ventas_crud_list")
-    return render(request, "Tienda/ventas/venta_crud_confirmar_eliminar.html", {"obj": obj})
+        return redirect("Tienda:ventas_list")
+
+    return render(
+        request,
+        "Tienda/ventas/venta_crud_confirmar_eliminar.html",
+        {"obj": venta}
+    )
+
 
 # EMPLEADOS (CRUD Dueña)
 @require_role('DUEÑA')
@@ -545,3 +570,69 @@ def tipoempleado_delete(request, pk):
         messages.success(request, "Tipo de empleado eliminado correctamente.")
         return redirect("Tienda:tipoempleado_list")
     return render(request, "Tienda/tipoempleado/tipoempleado_confirmar_eliminar.html", {"obj": obj})
+
+
+@require_role('EMPLEADO', 'JEFE', 'GERENTE')
+def venta_pos_create(request):
+    DetalleFormSet = formset_factory(DetalleVentaForm, extra=3)  # 3 filas de detalle vacías
+
+    if request.method == 'POST':
+        venta_form = VentaPOSForm(request.POST)
+        detalle_formset = DetalleFormSet(request.POST)
+
+        if venta_form.is_valid() and detalle_formset.is_valid():
+            with transaction.atomic():
+                venta = venta_form.save(commit=False)
+
+                total = 0
+                detalles_validos = []
+
+                for f in detalle_formset:
+                    if not f.cleaned_data:
+                        # fila completamente vacía
+                        continue
+
+                    producto = f.cleaned_data['producto']
+                    cantidad = f.cleaned_data['cantidad_producto']
+
+                    if not producto or not cantidad:
+                        continue
+
+                    precio_unitario = producto.precio
+                    subtotal = precio_unitario * cantidad
+                    total += subtotal
+
+                    detalles_validos.append((producto, cantidad, precio_unitario, subtotal))
+
+                if not detalles_validos:
+                    messages.error(request, "Debes ingresar al menos un producto.")
+                else:
+                    # guardar venta con total calculado
+                    venta.total = total
+                    venta.save()
+
+                    # guardar detalles
+                    for producto, cantidad, precio_unitario, subtotal in detalles_validos:
+                        DetalleVenta.objects.create(
+                            venta=venta,
+                            producto=producto,
+                            cantidad_producto=cantidad,
+                            precio_unitario=precio_unitario,
+                            subtotal=subtotal,
+                        )
+
+                    messages.success(request, f"Venta #{venta.idventa} creada por ${total}.")
+                    return redirect('Tienda:ventas_crud_list')  # o la lista que estés usando
+
+    else:
+        venta_form = VentaPOSForm()
+        detalle_formset = DetalleFormSet()
+
+    return render(
+        request,
+        'Tienda/ventas/venta_pos_form.html',
+        {
+            'venta_form': venta_form,
+            'detalle_formset': detalle_formset,
+        }
+    )

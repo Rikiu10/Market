@@ -1,19 +1,22 @@
 {% extends "Tienda/base.html" %}
-{% block title %}{% if obj %}Editar Venta{% else %}Nueva Venta{% endif %}{% endblock %}
+{% block title %}
+  {% if obj %}Editar venta{% else %}Nueva venta{% endif %}
+{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h1 class="h4 mb-0">
-    {% if obj %}Editar Venta{% else %}Nueva Venta{% endif %}
-  </h1>
-  <a class="btn btn-secondary" href="{% url 'Tienda:ventas_crud_list' %}">Volver</a>
-</div>
+<h1 class="h4 mb-3">
+  {% if obj %}
+    Editar venta #{{ obj.idventa }}
+  {% else %}
+    Nueva venta
+  {% endif %}
+</h1>
 
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}
 
-  <button type="submit" class="btn btn-primary">Guardar</button>
-  <a href="{% url 'Tienda:ventas_crud_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+  <button type="submit" class="btn btn-dark">Guardar</button>
+  <a href="{% url 'Tienda:ventas_list' %}" class="btn btn-secondary">Cancelar</a>
 </form>
 {% endblock %}

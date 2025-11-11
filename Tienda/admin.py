@@ -34,7 +34,6 @@ class CredencialesAdmin(admin.ModelAdmin):
 
 @admin.register(Movimiento)
 class MovimientoAdmin(admin.ModelAdmin):
-    # Form del admin: solo estos campos (no pide producto_idproducto)
     fields = ("descripcion", "fecha", "tipo")
     list_display = ("idmovimiento", "tipo", "fecha", "descripcion")
     list_display_links = ("idmovimiento", "tipo")
@@ -46,7 +45,6 @@ class MovimientoAdmin(admin.ModelAdmin):
 
 @admin.register(Historial)
 class HistorialAdmin(admin.ModelAdmin):
-    # Form del admin: solo fecha (no pide alertas_idalertas ni producto_idproducto)
     fields = ("fecha",)
     list_display = ("idhistorial", "fecha")
     list_display_links = ("idhistorial", "fecha") 
@@ -55,7 +53,7 @@ class HistorialAdmin(admin.ModelAdmin):
 
 @admin.register(Venta)
 class VentaAdmin(admin.ModelAdmin):
-    fields = ("fecha", "total", "empleado")  #se oculto empleado_idempleado
+    fields = ("fecha", "total", "empleado")  
     list_display = ("idventa", "fecha", "total", "empleado")
     date_hierarchy = "fecha"
 

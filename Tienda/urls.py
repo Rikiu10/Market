@@ -17,10 +17,11 @@ urlpatterns = [
     # Ventas/reportes para Gerente/Jefe
     path("ventas/",views.ventas_list,name="ventas_list"),
     path("ventas/nueva/",views.venta_form,name="venta_form"),
-    path("ventas/editar/<int:id>/",views.venta_edit,name="venta_edit"),
-    path("ventas/eliminar/<int:id>/",views.venta_delete,name="venta_delete"),
+    path("ventas/editar/<int:pk>/", views.venta_crud_edit, name="venta_crud_edit"),
+    path("ventas/eliminar/<int:pk>/", views.venta_crud_delete, name="venta_crud_delete"),
     path("carrito/",views.carrito_view,name="carrito"),
     path("reportes/",views.reportes_view,name="reportes"),
+    path("ventas-pos/nueva/", views.venta_pos_create, name="venta_pos_create"),
 
     # Productos (services)
     path("productos/",views.producto_list,name="producto_list"),
@@ -68,4 +69,5 @@ urlpatterns = [
     path("tipoempleados/nuevo/",views.tipoempleado_create,name="tipoempleado_create"),
     path("tipoempleados/editar/<int:pk>/",views.tipoempleado_edit,name="tipoempleado_edit"),
     path("tipoempleados/eliminar/<int:pk>/",views.tipoempleado_delete,name="tipoempleado_delete"),
+    path("ventas-pos/nueva/", views.venta_pos_create, name="venta_pos_create")
 ]

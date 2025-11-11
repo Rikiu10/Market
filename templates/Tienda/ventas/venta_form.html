@@ -6,7 +6,7 @@
   {% csrf_token %} {{ form.as_p }}
   <div class="d-flex gap-2">
     <button class="btn btn-dark" type="submit">Guardar</button>
-    <a class="btn btn-outline-secondary" href="{% url 'Tienda:ventas_crud_list' %}">Cancelar</a>
+    <a class="btn btn-outline-secondary" href="{% url 'Tienda:venta_pos_create' %}">Cancelar</a>
   </div>
 </form>
 {% endblock %}

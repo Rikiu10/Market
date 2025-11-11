@@ -1,17 +1,13 @@
 {% extends "Tienda/base.html" %}
-{% block title %}Eliminar Venta{% endblock %}
+{% block title %}Eliminar venta{% endblock %}
 {% block content %}
-<div class="col-md-8 col-lg-6">
-  <div class="card border-danger">
-    <div class="card-header bg-danger text-white">Confirmar eliminación</div>
-    <div class="card-body">
-      <p>¿Seguro que deseas eliminar la venta <strong>#{{ obj.idventa }}</strong> del <strong>{{ obj.fecha }}</strong> por <strong>${{ obj.total }}</strong>?</p>
-      <form method="post" class="d-flex gap-2">
-        {% csrf_token %}
-        <a class="btn btn-secondary" href="{% url 'Tienda:ventas_crud_list' %}">Cancelar</a>
-        <button class="btn btn-danger" type="submit">Sí, eliminar</button>
-      </form>
-    </div>
-  </div>
-</div>
+<h1 class="h4 mb-3">Eliminar venta #{{ obj.idventa }}</h1>
+
+<p>¿Seguro que deseas eliminar la venta del día <strong>{{ obj.fecha }}</strong> por <strong>${{ obj.total }}</strong>?</p>
+
+<form method="post">
+  {% csrf_token %}
+  <a href="{% url 'Tienda:ventas_list' %}" class="btn btn-secondary">Cancelar</a>
+  <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+</form>
 {% endblock %}

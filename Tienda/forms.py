@@ -1,6 +1,6 @@
 # Tienda/forms.py
 from django import forms
-from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado
+from .models import Credenciales, Movimiento, Historial, Venta, Empleado, TipoEmpleado, DetalleVenta
 
 # --- CREDENCIALES -------------------------------------------------
 class CredencialesForm(forms.ModelForm):
@@ -53,23 +53,24 @@ class HistorialForm(forms.ModelForm):
             'producto': forms.Select(attrs={'class': 'form-select'}),
         }
 
-#Venta
+# Venta
 class VentaForm(forms.ModelForm):
     class Meta:
         model = Venta
-        # AHORA incluimos el empleado
+        # INCLUIMOS total (y opcionalmente empleado)
         fields = ['fecha', 'total', 'empleado']
         widgets = {
             'fecha': forms.DateInput(
                 attrs={'type': 'date', 'class': 'form-control'}
             ),
             'total': forms.NumberInput(
-                attrs={'class': 'form-control'}
+                attrs={'class': 'form-control', 'min': '0'}
             ),
             'empleado': forms.Select(
-                attrs={'class': 'form-select'}  # o 'form-control' si prefieres
+                attrs={'class': 'form-select'}
             ),
         }
+
 
 #Empleado
 class EmpleadoForm(forms.ModelForm):
@@ -92,4 +93,24 @@ class TipoEmpleadoForm(forms.ModelForm):
         fields = ['rol']
         widgets = {
             'rol': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class DetalleVentaForm(forms.ModelForm):
+    class Meta:
+        model = DetalleVenta
+        fields = ['producto', 'cantidad_producto']
+        widgets = {
+            'producto': forms.Select(attrs={'class': 'form-control'}),
+            'cantidad_producto': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+        }
+
+class VentaPOSForm(forms.ModelForm):
+    class Meta:
+        model = Venta
+        # total no va aquí, lo calculamos en la vista
+        fields = ['fecha', 'empleado']
+        widgets = {
+            'fecha': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'empleado': forms.Select(attrs={'class': 'form-control'}),
         }
