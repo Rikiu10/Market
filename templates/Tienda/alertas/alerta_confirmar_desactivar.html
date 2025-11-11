@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'Tienda/base.html' %}
 
 {% block title %}Confirmar Desactivación de Alerta - {{ block.super }}{% endblock %}
 
@@ -29,7 +29,7 @@
                 <form method="post">
                     {% csrf_token %}
                     <div class="d-flex justify-content-between mt-4">
-                        <a href="{% url 'alertas_list' %}" class="btn btn-secondary">
+                        <a href="{% url 'Tienda:alertas' %}" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Cancelar
                         </a>
                         <button type="submit" class="btn btn-warning">
