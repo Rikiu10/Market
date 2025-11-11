@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure--8(92(l3k$09(=+8pp)1mg&ichpm8p8z3y*zghw=lms&p32f!m
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -134,3 +134,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'  # seguro por defecto
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000']

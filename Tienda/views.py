@@ -311,7 +311,7 @@ def producto_delete(request, id):
     return render(request, "Tienda/productos/producto_confirmar_eliminar.html", {"producto": producto})
 
 # ------------------- ALERTAS (services) -------------------------
-@require_role('GERENTE', 'JEFE')
+@require_role('DUEÑA', 'JEFE')
 def alertas_view(request):
     alertas = AlertaService.obtener_todas()
     enriquecidas = []
@@ -322,7 +322,7 @@ def alertas_view(request):
         enriquecidas.append(a)
     return render(request, "Tienda/alertas/alertas_list.html", {"alertas": enriquecidas})
 
-@require_role('GERENTE', 'JEFE')
+@require_role('DUEÑA', 'JEFE')
 def alerta_desactivar(request, alerta_id):
     alerta = AlertaService.obtener_por_id(alerta_id)
     if not alerta:
@@ -333,7 +333,7 @@ def alerta_desactivar(request, alerta_id):
         return redirect('Tienda:alertas')
     return render(request, 'Tienda/alertas/alerta_confirmar_desactivar.html', {'alerta': alerta})
 
-@require_role('GERENTE', 'JEFE')
+@require_role('DUEÑA', 'JEFE')
 def alertas_historial_list(request):
     """Historial de alertas (vía services)"""
     historial = HistorialService.obtener_todo()
@@ -415,12 +415,12 @@ def movimiento_delete(request, pk):
     return render(request, "Tienda/movimientos/movimiento_confirmar_eliminar.html", {"obj": obj})
 
 # HISTORIAL (tabla)
-@require_role('GERENTE', 'JEFE')
+@require_role('DUEÑA')
 def historial_list(request):
     objetos = Historial.objects.all().order_by('-fecha')
     return render(request, "Tienda/historial/historial_list.html", {"objetos": objetos})
 
-@require_role('GERENTE', 'JEFE')
+@require_role('DUEÑA')
 def historial_create(request):
     form = HistorialForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -429,7 +429,7 @@ def historial_create(request):
         return redirect("Tienda:historial_list")
     return render(request, "Tienda/historial/historial_form.html", {"form": form})
 
-@require_role('GERENTE', 'JEFE')
+@require_role('DUEÑA')
 def historial_edit(request, pk):
     obj = get_object_or_404(Historial, pk=pk)
     form = HistorialForm(request.POST or None, instance=obj)
@@ -439,7 +439,7 @@ def historial_edit(request, pk):
         return redirect("Tienda:historial_list")
     return render(request, "Tienda/historial/historial_form.html", {"form": form, "obj": obj})
 
-@require_role('GERENTE', 'JEFE')
+@require_role('DUEÑA')
 def historial_delete(request, pk):
     obj = get_object_or_404(Historial, pk=pk)
     if request.method == "POST":
