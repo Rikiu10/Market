@@ -1,0 +1,5 @@
+/* Clean slate for Bootstrap */
+#root {
+  /* Removed max-width, margin: 0 auto, etc. */
+  width: 100%;
+}

@@ -1,0 +1,10 @@
+/* Clean slate for Bootstrap */
+:root {
+  /* Vite defaults removed to let Bootstrap take over */
+}
+
+body {
+  margin: 0;
+  /* Removed display: flex; place-items: center; min-width defaults */
+  min-height: 100vh;
+}
