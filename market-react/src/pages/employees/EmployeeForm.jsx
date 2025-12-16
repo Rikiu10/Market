@@ -101,7 +101,7 @@ const EmployeeForm = () => {
                                     <option key={t.idtipoEmpleado} value={t.idtipoEmpleado}>{t.rol}</option>
                                 ))}
                             </select>
-                            <div className="form-text">Si no existe, crea uno en "Tipos de Empleado"</div>
+                            <div className="form-text"></div>
                         </div>
 
                         <div className="col-md-6 mb-3">
@@ -112,7 +112,7 @@ const EmployeeForm = () => {
                                     <option key={c.idcredenciales} value={c.idcredenciales}>{c.user}</option>
                                 ))}
                             </select>
-                            <div className="form-text">Crea primero el usuario en "Credenciales"</div>
+                            <div className="form-text"></div>
                         </div>
                     </div>
 

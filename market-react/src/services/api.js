@@ -201,14 +201,14 @@ export const Api = {
 
     // --- TIPO EMPLEADO ---
     getEmployeeTypes: async () => {
-        const res = await fetch(`${API_URL}/tipoempleados/`);
+        const res = await fetch(`${API_URL}/tipo-empleado/`);
         if (!res.ok) throw new Error('Error fetching employee types');
         return await res.json();
     },
 
     saveEmployeeType: async (data) => {
         const method = data.idtipoEmpleado ? 'PUT' : 'POST';
-        const url = data.idtipoEmpleado ? `${API_URL}/tipoempleados/${data.idtipoEmpleado}/` : `${API_URL}/tipoempleados/`;
+        const url = data.idtipoEmpleado ? `${API_URL}/tipo-empleado/${data.idtipoEmpleado}/` : `${API_URL}/tipo-empleado/`;
         const res = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
@@ -219,7 +219,7 @@ export const Api = {
     },
 
     deleteEmployeeType: async (id) => {
-        await fetch(`${API_URL}/tipoempleados/${id}/`, { method: 'DELETE' });
+        await fetch(`${API_URL}/tipo-empleado/${id}/`, { method: 'DELETE' });
     },
 
     // --- CREDENCIALES ---

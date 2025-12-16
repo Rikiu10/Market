@@ -25,10 +25,23 @@ import CredencialForm from './pages/credenciales/CredencialForm';
 // Placeholder components for routes we haven't built yet
 const Placeholder = ({ title }) => <div className="p-4"><h2>{title}</h2><p>Página en construcción</p></div>;
 
+// Helper to match roles with encoding tolerance
+const roleMatches = (userRole, allowedRoles) => {
+  if (!allowedRoles) return true;
+
+  // Normalize role for comparison
+  const normalizedUserRole = userRole?.toUpperCase().replace(/[^A-Z]/g, '');
+
+  return allowedRoles.some(role => {
+    const normalizedRole = role.toUpperCase().replace(/[^A-Z]/g, '');
+    return normalizedUserRole === normalizedRole;
+  });
+};
+
 const ProtectedRoute = ({ children, roles }) => {
   const { user } = useAuth();
   if (!user) return <Navigate to="/login" replace />;
-  if (roles && !roles.includes(user.role)) return <Navigate to="/" replace />;
+  if (roles && !roleMatches(user.role, roles)) return <Navigate to="/" replace />;
   return children;
 };
 

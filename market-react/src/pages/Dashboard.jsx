@@ -82,7 +82,7 @@ const Dashboard = () => {
                     </div>
                 )}
 
-                {user.role === 'DUEÑA' && (
+                {(user.role === 'DUEÑA' || user.role?.includes('DUE')) && (
                     <>
                         <div className="col-md-4">
                             <Link to="/empleados" className="text-decoration-none">
